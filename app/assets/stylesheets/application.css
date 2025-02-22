@@ -457,7 +457,6 @@ select {
 
 #form-results .form-fields {
   align-items: center;
-  display: flex;
   flex-wrap: wrap;
 }
 
