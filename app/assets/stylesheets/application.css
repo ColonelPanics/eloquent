@@ -14,11 +14,11 @@
  *= require_self
  */
 
-elo-swing.positive { 
+skill-swing.positive { 
     color: green;
 }
 
-elo-swing.negative { 
+skill-swing.negative { 
     color: red;
 }
 

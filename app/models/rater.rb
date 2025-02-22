@@ -116,7 +116,8 @@ module Rater
     def validate_game game
     end
 
-    def update_ratings game, teams
+    def update_ratings game, result
+      teams = result.teams
       ratings_to_ranks = teams.sort_by(&:rank).each_with_object({}){ |team, hash| hash[team.players.map{|player| player.ratings.find_or_create(game)}] = team.rank }
 
       ratings_to_trueskill = {}

@@ -5,11 +5,11 @@
         <%= image_tag(gravatar_url(winner, size: 16)) %>
         <strong> <%= winner.name %></strong>
       <% end %>
-      <% swing = result.elo_swing(winner) %>
+      <% swing = result.skill_swing(winner) %>
       <% if swing.positive? %>
-        <elo-swing class="positive">+<%= swing %></elo-swing>
+        <skill-swing class="positive">+<%= swing %></skill-swing>
       <% else %>
-        <elo-swing class="negative"><%= swing %></elo-swing>
+        <skill-swing class="negative"><%= swing %></skill-swing>
       <% end %>
     <% end %>
     <% if i == 0 %>

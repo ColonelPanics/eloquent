@@ -70,24 +70,28 @@ class Result < ApplicationRecord
     end
   end
 
-  def elo_swing(player)
-    # Calculate how the rating changed for player by comparing the elo rating
+  def skill_swing(player)
+    # Calculate how the rating changed for player by comparing the skill rating
     # in this match to the one from previous
     
     # The RatingHistoryEvent is created before the result, check for one created a second before the result
-    this_elo = RatingHistoryEvent.includes(:rating).where(:created_at => (self.created_at - 1.seconds)..self.created_at, ratings: { player_id: player, game_id: self.game_id }).first.value
+    this_skill = RatingHistoryEvent.includes(:rating).where(:created_at => (self.created_at - 1.seconds)..self.created_at, ratings: { player_id: player, game_id: self.game_id }).first.value
 
     # Get the player's last 2 results and take the first one from the list as that will be oldest
     prev_result = player.results.where(game_id: self.game_id).last(2).first
-    puts prev_result
-    # If the previous result is the same then this is their first match of 'game' so use default Elo
+    # If the previous result is the same then this is their first match of 'game' so use default value for whatever rater system this game uses
     if prev_result.id == self.id
-      prev_elo = 1000
+      rater = Game.find(self.game_id).rating_type
+      if rater == "elo"
+        prev_skill = 1000
+      else
+        prev_skill = 0
+      end
     else
       # The RatingHistoryEvent is created before the result, check for one created a second before the result
-      prev_elo = RatingHistoryEvent.includes(:rating).where(:created_at => (prev_result.created_at - 1.seconds)..prev_result.created_at, ratings: { player_id: player, game_id: prev_result.game_id }).first.value  
+      prev_skill = RatingHistoryEvent.includes(:rating).where(:created_at => (prev_result.created_at - 1.seconds)..prev_result.created_at, ratings: { player_id: player, game_id: prev_result.game_id }).first.value  
     end
-    return (this_elo - prev_elo)
+    return (this_skill - prev_skill)
   end
 
 end
