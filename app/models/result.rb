@@ -2,6 +2,8 @@ class Result < ApplicationRecord
   has_many :teams
   belongs_to :game, touch: true
 
+  validates :for, presence: true, numericality: { only_integer: true }
+  validates :against, presence: true, numericality: { only_integer: true }
   validates :game, presence: true
   scope :most_recent_first, -> { order created_at: :desc }
   scope :for_game, -> (game) { where(game_id: game.id) }

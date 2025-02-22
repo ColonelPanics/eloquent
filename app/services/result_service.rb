@@ -16,9 +16,12 @@ class ResultService
       result.teams.build rank: team[:rank], player_ids: team[:players]
     end
 
+    result.for = params[:for]
+    result.against = params[:against]
+
     if result.valid?
       Result.transaction do
-        game.rater.update_ratings game, result.teams
+        game.rater.update_ratings game, result
 
         result.save!
 
