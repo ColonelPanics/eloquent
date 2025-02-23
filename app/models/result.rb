@@ -81,12 +81,7 @@ class Result < ApplicationRecord
     prev_result = player.results.where(game_id: self.game_id).last(2).first
     # If the previous result is the same then this is their first match of 'game' so use default value for whatever rater system this game uses
     if prev_result.id == self.id
-      rater = Game.find(self.game_id).rating_type
-      if rater == "elo"
-        prev_skill = 1000
-      else
-        prev_skill = 0
-      end
+      prev_skill = Game.find(self.game_id).rater.default_attributes[:value]
     else
       # The RatingHistoryEvent is created before the result, check for one created a second before the result
       prev_skill = RatingHistoryEvent.includes(:rating).where(:created_at => (prev_result.created_at - 1.seconds)..prev_result.created_at, ratings: { player_id: player, game_id: prev_result.game_id }).first.value  
