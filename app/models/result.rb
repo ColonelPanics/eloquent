@@ -33,7 +33,7 @@ class Result < ApplicationRecord
       result.errors.add(:teams, "must have at most #{result.game.max_number_of_players_per_team} players per team")
     end
 
-    if !result.game.allow_ties && result.teams.map(&:rank).uniq.size != result.teams.size
+    if !result.game.allow_ties && result.tie?
       result.errors.add(:teams, "game does not allow ties")
     end
   end
@@ -42,16 +42,83 @@ class Result < ApplicationRecord
     teams.map(&:players).flatten
   end
 
+  def verdict
+    # Check for a score draw
+    if self.against == self.for
+      # They drew, select all players involved
+      winteam = ''
+      loseteam = ''
+      winners = teams.find_all.map(&:players).flatten
+      winscore = self.for
+      losescore = self.against
+      losers = []
+      tie = true
+      side = 'tie'
+    else
+      # If 'For' side won
+      if self.for > self.against 
+        winteam = teams.first
+        winscore = self.for
+        loseteam = teams.last
+        losescore = self.against
+        side = 'for'
+      # If 'Against' side won
+      elsif self.against > self.for
+        winteam = teams.last
+        winscore = self.against
+        loseteam = teams.first
+        losescore = self.for
+        side = 'against'
+      end
+      tie = false
+      winners = winteam.players
+      losers = loseteam.players
+    end
+    return winners, losers, tie, winscore, losescore, side, winteam, loseteam
+  end
+
   def winners
-    teams.select{ |team| team.rank == Team::FIRST_PLACE_RANK }.map(&:players).flatten
+    # Returns an array of Player objects that won the match
+    # Note: In a draw, everyone is a winner!
+    verdict[0]
   end
 
   def losers
-    teams.select{ |team| team.rank != Team::FIRST_PLACE_RANK }.map(&:players).flatten
+    # Returns an array of Player objects that lost the match 
+    verdict[1]
   end
 
   def tie?
-    teams.count == teams.winners.count
+    # Boolean to check if match is a tie
+    verdict[2]
+  end
+
+  def winscore
+    # A way to access the score of the winner so later things don't 
+    # need to decide whether for or against score were the winners
+    verdict[3].to_f
+  end
+
+  def losescore
+    # A way to access the score of the loser so later things don't 
+    # need to decide whether for or against score were the losers
+    verdict[4].to_f
+  end
+
+  def side
+    # For seeing if the for or against side won
+    # Useful for eventual implementation of home/away based stats
+    verdict[5]
+  end
+
+  def winteam
+    # The Team object for the team that won
+    verdict[6]
+  end
+
+  def loseteam
+    # The Team object for the team that lost
+    verdict[7]
   end
 
   def as_json(options = {})
@@ -77,8 +144,9 @@ class Result < ApplicationRecord
     # The RatingHistoryEvent is created before the result, check for one created a second before the result
     this_skill = RatingHistoryEvent.includes(:rating).where(:created_at => (self.created_at - 1.seconds)..self.created_at, ratings: { player_id: player, game_id: self.game_id }).first.value
 
-    # Get the player's last 2 results and take the first one from the list as that will be oldest
-    prev_result = player.results.where(game_id: self.game_id).last(2).first
+    # Get the player's results before this result and take the first one of the last 2 from this list as it'll be the previous match played
+    # by this player in this game
+    prev_result = player.results.where(game_id: self.game_id, :created_at => 100.years.ago..self.created_at).last(2).first
     # If the previous result is the same then this is their first match of 'game' so use default value for whatever rater system this game uses
     if prev_result.id == self.id
       prev_skill = Game.find(self.game_id).rater.default_attributes[:value]
