@@ -22,7 +22,7 @@ class ResultsController < ApplicationController
 
   def new
     @result = Result.new
-    (@game.max_number_of_teams || 20).times{|i| @result.teams.build rank: i}
+    (@game.max_number_of_teams || 20).times{|i| @result.teams.build}
     @team_game = @game.max_number_of_players_per_team != 1
   end
 

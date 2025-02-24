@@ -1,17 +1,14 @@
 class Team < ApplicationRecord
-  FIRST_PLACE_RANK = 1
 
   has_many :memberships
   has_many :players, through: :memberships
   belongs_to :result, optional: true
 
-  validates :rank, presence: true
-
   scope :winners, -> {
-    where(:rank => FIRST_PLACE_RANK)
+    where(:winner => true)
   }
 
   scope :losers, -> {
-    where.not(:rank => FIRST_PLACE_RANK)
+    where(:winner => false) {|loser| !loser.result.tie?}
   }
 end

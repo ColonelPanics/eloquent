@@ -74,7 +74,7 @@ class Game < ApplicationRecord
     Rating.where(game_id: self.id).destroy_all
 
     results.order("id ASC").all.each do |result|
-      rater.update_ratings self, result.teams.order("rank ASC")
+      rater.update_ratings self, result.teams
     end
   end
 end

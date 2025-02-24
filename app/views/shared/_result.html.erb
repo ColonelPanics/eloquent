@@ -15,8 +15,10 @@
     <% if i == 0 %>
       <% if result.tie? %>
         <small>ties</small>
-      <% else %>
+      <% elsif team.winner %>
         <small>defeats</small>
+      <% else %>
+        <small>loses to</small>
       <% end %>
     <% end %>
   <% end %>

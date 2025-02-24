@@ -21,12 +21,9 @@ module Rater
 
     def update_ratings game, result
       teams = result.teams
-      winning_teams = teams.select{|team| team.rank == Team::FIRST_PLACE_RANK}
 
-      if winning_teams.size > 1
-        first_rating, second_rating = winning_teams
-          .map(&:players)
-          .map(&:first)
+      if result.tie?
+        first_rating, second_rating = result.winners
           .map{ |player| player.ratings.find_or_create(game) }
 
         first_elo = to_elo(first_rating)
@@ -34,8 +31,8 @@ module Rater
 
         first_elo.plays_draw(second_elo)
       else
-        winner = winning_teams.first.players.first
-        loser = teams.detect{|team| team.rank != Team::FIRST_PLACE_RANK}.players.first
+        winner = result.winners.first
+        loser = result.losers.first
 
         first_rating = winner.ratings.find_or_create(game)
         second_rating = loser.ratings.find_or_create(game)
@@ -75,7 +72,7 @@ module Rater
         ## Testing with a blank database and first match between "one" and "two"
         ##   "one" defeats "two" 10-0: one elo 1012, two elo 987
         ##   "one" defeats "two" 6-4: one elo 1004, two elo 995
-        skew = (result.against.to_f / result.for ).to_f / 2
+        skew = (result.losescore / result.winscore ).to_f / 2
         result = 1 - skew
         match.result = result
       end

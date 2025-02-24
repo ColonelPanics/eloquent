@@ -2,22 +2,25 @@ class ResultService
   def self.create(game, params)
     result = game.results.build
 
-    next_rank = Team::FIRST_PLACE_RANK
+
     teams = (params[:teams] || {}).values.each.with_object([]) do |team, acc|
       players = Array.wrap(team[:players]).delete_if(&:blank?)
-      acc << { rank: next_rank, players: players }
-
-      next_rank = next_rank + 1 if team[:relation] != "ties"
+      acc << { players: players }
     end
 
     teams = teams.reverse.drop_while{ |team| team[:players].empty? }.reverse
 
     teams.each do |team|
-      result.teams.build rank: team[:rank], player_ids: team[:players]
+      result.teams.build player_ids: team[:players]
     end
 
     result.for = params[:for]
     result.against = params[:against]
+
+    if ! result.tie?
+      result.winteam.winner = true
+      result.loseteam.winner = false
+    end
 
     if result.valid?
       Result.transaction do

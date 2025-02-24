@@ -26,7 +26,7 @@
         <% @game.all_ratings.each do |rating| %>
           <% opponent = rating.player %>
           <% wins = @player.wins(@game, opponent) %>
-          <% losses = @player.results.losses.for_game(@game).against(opponent).size %>
+          <% losses = @player.losses(@game, opponent) %>
           <tr class="<%= "unplayed" if @player != opponent and wins == 0 and losses == 0 %>" >
             <td>
               <%= link_to opponent do %>
@@ -66,7 +66,7 @@
           -
           <% if result.winners.include?(@player) %>
             <% if result.losers.empty? %>
-              Tied
+              Tied with <strong><%= result.winners.select{|player| player.name != @player.name}.map(&:name).join(", ") %></strong>
             <% else %>
               Won against <strong><%= result.losers.map(&:name).join(", ") %></strong>
             <% end %>
