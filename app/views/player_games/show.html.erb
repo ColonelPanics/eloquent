@@ -7,6 +7,26 @@
 </section>
 
 <div class="row">
+  <div class="span12">
+    <h2>Statistics</h2>
+    <ul id='games-list' style="grid-template-columns: 1fr 1fr 1fr 1fr">
+      <% forwin = @player.total_wins_on_for(@game) %>
+      <% againstwin = @player.total_wins_on_against(@game) %>
+      <% forpref = (forwin == 0 and @player.total_wins(@game) == 0) && 0.5 || forwin.to_f / @player.total_wins(@game) %> 
+      <% winside = (forpref == 0.5) && 'Evens' || (forpref >0.5 && "#{(forpref * 100).round(2)}% For" || "#{((1 - forpref) * 100).round(2)}% Against") %>
+      <%= render 'stat', name: "Win Distribution", value: winside, description: "#{forwin} For & #{againstwin} Against" %>
+      <% all_streaks = @player.get_streaks(@game) %>
+      <%= render 'stat', name: "Current Streak", value: all_streaks[:current].count, description: all_streaks[:currentType] %>
+      <% win = all_streaks[:win] %>
+      <%= render 'stat', name: "Longest Win", value: win.count, description: win.fromDate != 0 && "(#{win.fromDate.strftime('%Y-%m-%d %H:%M')} to #{win.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
+      <% unbeaten = all_streaks[:unbeaten] %>
+      <%= render 'stat', name: "Longest Unbeaten", value: unbeaten.count, description: unbeaten.fromDate != 0 && "(#{unbeaten.fromDate.strftime('%Y-%m-%d %H:%M')} to #{unbeaten.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
+      <% lose = all_streaks[:lose] %>
+      <%= render 'stat', name: "Longest Lose", value: lose.count, description: lose.fromDate != 0 && "(#{lose.fromDate.strftime('%Y-%m-%d %H:%M')} to #{lose.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
+    </ul>
+  </div>
+<div>
+<div class="row">
   <div class="span6">
     <h2>Head-to-Head Records</h2>
     <table id='ratings'>
@@ -84,5 +104,5 @@
 
 <div class="row">
   <h2>Progress</h2>
-    <%= line_chart @chart_data, min: nil, max: nil, xtitle: 'Matches', ytitle: @game.rating_type.capitalize %>
+    <%= line_chart @chart_data, min: nil, max: nil, xtitle: 'Matches', ytitle: @game.rating_type.capitalize, curve: false, discrete: true %>
 </div>

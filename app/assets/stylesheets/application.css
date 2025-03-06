@@ -22,6 +22,11 @@ skill-swing.negative {
     color: red;
 }
 
+.stat-item {
+    background-color: white;
+    text-align: center;
+}
+
 .row:before, .row:after, .row-fluid:before, .row-fluid:after {
   content: '';
   display: table;
