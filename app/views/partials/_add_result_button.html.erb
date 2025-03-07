@@ -30,7 +30,7 @@
     data-transition-leave-start="transform opacity-100"
     data-transition-leave-end="transform opacity-0"
   >
-    <% Game.order(:name).each do |game| %>
+    <% all_games.each do |game| %>
       <%= link_to game.name, new_game_result_path(game), class: "btn btn-primary w-full" %>
     <% end %>
   </div>
