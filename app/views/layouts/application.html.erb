@@ -9,23 +9,19 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
     <%= javascript_importmap_tags %>
   </head>
   <body>
     <div id='container'>
-      <header>
-        <%= link_to root_path, class: "brand" do %>
-          <div class='brand-name'><%= brand_title %></div>
-          <div class='brand-label'>Home</div>
+      <header class="bg-neutral-900 py-4">
+        <%= link_to root_path, class: "p-2" do %>
+          <%= brand_title %>
         <% end %>
       </header>
       <div id='main'>
         <%= yield %>
       </div>
+      <div class="text-center text-neutral-400 text-sm p-2">Powered by Elovation</div>
     </div>
-    <% if brand_title != "Elovation" %>
-      <div class="footer">Powered by Elovation</div>
-    <% end %>
   </body>
 </html>

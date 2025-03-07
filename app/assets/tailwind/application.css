@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+html, body, #container {
+  @apply w-full h-full;
+}
+
+#container {
+  @apply flex flex-col;
+}
+
+#main {
+  @apply grow;
+}
+
+.btn {
+  @apply inline-block p-2 bg-blue-500 hover:bg-blue-400 text-white hover:text-white;
+}
+
+
+a {
+  @apply text-blue-500 hover:text-blue-400
+}
+
+header a {
+  @apply text-white hover:text-neutral-200;
+}

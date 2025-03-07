@@ -1,70 +1,82 @@
 <% if @players.length > 1 %>
-  <div class="row-fluid">
-    <div class="span8 text-red-500">
-      <h1><%= brand_title %> Games</h1>
+  <div class="grid grid-cols-2 gap-8 h-full">
+    <div class="overflow-y-auto min-h-0">
+      <div class="flex justify-between m-2">
+        <h2 class="text-2xl">
+          <%= brand_title %> Games
+        </h2>
+        <div>
+          <%= link_to "New Game Type", new_game_path, class: "btn", data: { turbo_frame: "new_game" } %>
+        </div>
+      </div>
 
-      <%= turbo_frame_tag "new_game", target: "_top" do %>
-        <%= link_to "New Game", new_game_path, class: "btn btn-primary", data: { turbo_frame: "new_game" } %>
-      <% end %>
+      <%= turbo_frame_tag "new_game", target: "_top" %>
 
-      <ul id='games-list'>
+      <div class="grid grid-cols-3 gap-4 p-4 ml-8">
         <% @games.each do |game| %>
-          <li class="<%= "active" if @game == game %> game-list-item">
-            <%= link_to game_path(game) do %>
-              <h3 class='game-title'><%= game.name %></h3>
-              <ul class='game-params'>
-                <li class='rating-type'><%= game.rating_type %> – <%= game.allow_ties ? 'Ties allowed' : 'No ties' %></li>
-                <li class='num-players'><%= game.players.length %> players</li>
-                <li class='games-played'><%= game.results.length %> games played</li>
-              </ul>
-              <% result = game.recent_results.limit(1).first %>
-              <% if result %>
-                <div class='recent-result'>
-                  <h4>Last game</h4>
-                  <div class='description'>
-                    <% result.teams.each_with_index do |team, i| %>
-                      <% team.players.each do |winner| %>
-                        <span class='player'>
-                          <strong><%= winner.name %></strong>
-                        </span>
-                      <% end %>
-                      <% if i == 0 %>
-                        <% if result.tie? %>
-                          ties
-                        <% else %>
-                          defeated
-                        <% end %>
+          <%= link_to game_path(game), class: "!text-neutral-800 border p-4 hover:bg-neutral-100" do %>
+            <h3 class='text-2xl mb-4'><%= game.name %></h3>
+            <ul class='text-sm text-center'>
+              <li class='rating-type'><%= game.rating_type %> – <%= game.allow_ties ? 'Ties allowed' : 'No ties' %></li>
+              <li class='num-players'><%= game.players.length %> players</li>
+              <li class='games-played'><%= game.results.length %> games played</li>
+            </ul>
+            <% result = game.recent_results.limit(1).first %>
+            <% if result %>
+              <div class='mt-4'>
+                <h4 class="text-lg mb-2">Last game</h4>
+                <div class='ml-8'>
+                  <% result.teams.each_with_index do |team, i| %>
+                    <% team.players.each do |winner| %>
+                      <span class='player'>
+                        <strong><%= winner.name %></strong>
+                      </span>
+                    <% end %>
+                    <% if i == 0 %>
+                      <% if result.tie? %>
+                        ties
+                      <% else %>
+                        defeated
                       <% end %>
                     <% end %>
-                    <br/>
-                    <time><%= format_time(result.created_at) %></time>
-                  </div>
+                  <% end %>
+                  <br/>
+                  <time class="text-xs"><%= format_time(result.created_at) %></time>
                 </div>
-              <% end %>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="overflow-y-auto min-h-0">
+      <div class="flex justify-between m-2">
+        <h2 class="text-2xl">Players</h2>
+        <%= link_to "See all players", players_path, class: "btn" %>
+      </div>
+      <ul class='ml-8 p-4'>
+        <% @players.each_with_index do |player, index| %>
+          <li class="group border-b border-neutral-400">
+            <%= link_to player_path(player), class: "flex p-2 gap-4 justify-between items-center" do %>
+              <span class="bg-blue-600 group-first:bg-yellow-500 text-white text-lg aspect-square size-10 flex justify-center items-center font-bold">
+                <%= index + 1 %>
+              </span>
+              <%= image_tag(gravatar_url(player, size: 24)) %>
+              <span class="grow text-lg">
+                <%= player.name %>
+              </span>
+              <span>
+                <%= player.ratings.last&.value || "-" %>
+              </span>
             <% end %>
           </li>
         <% end %>
       </ul>
     </div>
-    <div class="span4">
-      <div>
-        <h2>Players</h2>
-          <%= link_to "See all players", players_path, class: "btn" %>
-          <ul id='players-list'>
-            <% @players.each do |player| %>
-              <li>
-                <%= link_to player_path(player) do %>
-                  <%= image_tag(gravatar_url(player, size: 24)) %>
-                  <%= player.name %> - <%= player.ratings.last && player.ratings.last.value || 'n/a' %>
-                <% end %>
-              </li>
-            <% end %>
-          </ul>
-      </div>
-    </div>
   </div>
 <% else %>
-  <h1><%= brand_title %> Games</h1>
-  <h3>You have no players yet! Add at least 2 players to get started.</h3>
+  <h1 class="text-4xl"><%= brand_title %> Games</h1>
+  <h3 class="text-xl">You have no players yet! Add at least 2 players to get started.</h3>
   <%= link_to "Add players", players_path, class: "btn" %>
 <% end %>
