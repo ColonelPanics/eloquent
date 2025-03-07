@@ -1,0 +1,37 @@
+<div
+  class="relative"
+  data-controller="menu"
+  data-action="click@window->menu#close"
+>
+  <button
+    class="btn !flex items-center gap-2 z-10"
+    data-action="menu#toggle"
+    type="button"
+  >
+    Add result
+    <svg
+      class="inline-block size-3"
+      fill="currentColor"
+      viewBox="0 0 14 14"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M 7,10 0.937822,4 H 13.0622 Z"
+        id="path2" />
+    </svg>
+  </button>
+  <div
+    class="absolute hidden w-48 right-0 bg-white"
+    data-menu-target="menu"
+    data-transition-enter="transition ease-out duration-100"
+    data-transition-enter-start="transform opacity-0 -translate-y-5"
+    data-transition-enter-end="transform opacity-100"
+    data-transition-leave="transition ease-in duration-75"
+    data-transition-leave-start="transform opacity-100"
+    data-transition-leave-end="transform opacity-0"
+  >
+    <% Game.order(:name).each do |game| %>
+      <%= link_to game.name, new_game_result_path(game), class: "btn btn-primary w-full" %>
+    <% end %>
+  </div>
+</div>

@@ -13,10 +13,11 @@
   </head>
   <body>
     <div id='container'>
-      <header class="bg-neutral-900 py-4">
+      <header class="bg-neutral-900 p-2 flex justify-between">
         <%= link_to root_path, class: "p-2" do %>
           <%= brand_title %>
         <% end %>
+        <%= render "partials/add_result_button" %>
       </header>
       <div id='main'>
         <%= yield %>
