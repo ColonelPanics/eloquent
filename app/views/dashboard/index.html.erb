@@ -1,7 +1,7 @@
 <% if @players.length > 1 %>
-  <div class="grid grid-cols-2 gap-8 h-full">
+  <div class="grid grid-cols-2 gap-8 h-full p-4">
     <div class="overflow-y-auto min-h-0">
-      <div class="flex justify-between m-2">
+      <div class="flex justify-between">
         <h2 class="text-2xl">
           <%= brand_title %> Games
         </h2>
@@ -51,7 +51,7 @@
     </div>
 
     <div class="overflow-y-auto min-h-0">
-      <div class="flex justify-between m-2">
+      <div class="flex justify-between">
         <h2 class="text-2xl">Players</h2>
         <%= link_to "See all players", players_path, class: "btn" %>
       </div>
@@ -63,9 +63,14 @@
               <span class="grow text-lg">
                 <%= player.name %>
               </span>
-              <span>
-                <%= player.ratings.last&.value || "-" %>
-              </span>
+              <% all_games.each do |game| %>
+                <div class="flex flex-col items-center">
+                  <span class="text-xs text-neutral-400">
+                    <%= game.name %>
+                  </span>
+                  <%= player.ratings.where(game: game).last&.value || 'n/a' %>
+                </div>
+              <% end %>
             <% end %>
           </li>
         <% end %>
