@@ -1,14 +1,19 @@
-<tr>
+<tr class="group border-b border-neutral-400">
+  <td class="w-12">
+    <span class="bg-blue-600 group-first:bg-yellow-500 text-white text-lg aspect-square size-10 flex justify-center items-center font-bold my-1">
+      <%= rating_iteration.index + 1 %>
+    </span>
+  </td>
   <td>
-    <div class='player'>
+    <div class="flex items-center gap-4 text-lg">
       <%= image_tag(gravatar_url(rating.player, size: 24)) %>
       <%= link_to rating.player.name, player_game_path(rating.player, @game) %>
     </div>
   </td>
-  <td><%= rating.value %></td>
-  <td><%= rating.player.total_wins(rating.game) %></td>
-  <td><%= rating.player.total_losses(rating.game) %></td>
+  <td class="text-right"><%= rating.player.total_wins(rating.game) %></td>
   <% if @game.allow_ties %>
-    <td><%= rating.player.total_ties(rating.game) %></td>
+    <td class="text-right"><%= rating.player.total_ties(rating.game) %></td>
   <% end %>
+  <td class="text-right"><%= rating.player.total_losses(rating.game) %></td>
+  <td class="text-lg text-right"><%= rating.value %></td>
 </tr>

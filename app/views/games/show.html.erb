@@ -1,36 +1,41 @@
-<h1>Games / <%= @game.name %></h1>
-<div class="row-fluid">
-  <div class="span8">
-    <% if @game.results.empty? %>
-      <%= button_to "Delete", game_path(@game), method: :delete, form: { data: { turbo_confirm: 'Are you sure?' } }, class: "btn btn-danger" %>
-    <% else %>
-      <%= turbo_frame_tag dom_id(@game), target: "_top" do %>
-        <section class="action-buttons">
-          <%= link_to 'Edit', edit_game_path(@game), data: { turbo_frame: dom_id(@game) }, class: "btn" %>
-        </section>
+<div class="p-4 grid grid-cols-2 grid-rows-[auto_1fr_1fr] gap-x-8 h-full">
+  <h1 class="text-4xl mb-4">
+    <%= @game.name %>
+  </h1>
+  <section>
+    <div class="flex items-center justify-end gap-4">
+      <%= link_to 'Edit game type', edit_game_path(@game), data: { turbo_frame: dom_id(@game) }, class: "btn" %>
+      <% if @game.results.empty? %>
+        <%= button_to "Delete game type", game_path(@game), method: :delete, form: { data: { turbo_confirm: 'Are you sure?' } }, class: "btn btn-danger" %>
       <% end %>
-    <% end %>
-    <h2>Recent Results</h2>
-    <%= link_to "Add Result", new_game_result_path(@game), class: "btn btn-primary" %>
+    </div>
+    <%= turbo_frame_tag dom_id(@game), class: "text-left", target: "_top" %>
+  </section>
+  <div class="overflow-y-auto min-h-0">
+    <div class="flex justify-between items-center">
+      <h2 class="text-2xl mb-4">Recent Results</h2>
+      <%= link_to "Add Result", new_game_result_path(@game), class: "btn btn-primary" %>
+    </div>
     <% if @game.recent_results.any? %>
       <%= render partial: 'shared/results', object: @game.recent_results, locals: {show_game: false} %>
     <% else %>
       <span>No results, play some games!</span>
     <% end %>
   </div>
-  <div class="span4">
-    <h2>Player Ratings</h2>
+  <div class="overflow-y-auto min-h-0 row-span-2">
+    <h2 class="text-2xl mb-4">Player Ratings</h2>
     <%= turbo_frame_tag "ratings", target: "_top" do %>
-      <table id='ratings'>
+      <table class="w-full">
         <thead>
           <tr>
-            <th>Player</th>
-            <th>Rating</th>
-            <th>W</th>
-            <th>L</th>
+            <th class="text-left">Rank</th>
+            <th class="text-left">Player</th>
+            <th class="text-right">Wins</th>
             <% if @game.allow_ties %>
-              <th>T</th>
+              <th class="text-right">Draws</th>
             <% end %>
+            <th class="text-right">Losses</th>
+            <th class="text-right">Rating</th>
           </tr>
         </thead>
         <tbody>
@@ -42,8 +47,8 @@
       <% end %>
     <% end %>
   </div>
-</div>
-<div>
-  <h2>Progress</h2>
-  <%= line_chart @chart_data, min: nil, max: nil, height: "800px", xtitle: 'Matches', ytitle: @game.rating_type.capitalize, curve: false %>
+  <div>
+    <h2>Progress</h2>
+    <%= line_chart @chart_data, min: nil, max: nil, xtitle: 'Matches', ytitle: @game.rating_type.capitalize, curve: false %>
+  </div>
 </div>

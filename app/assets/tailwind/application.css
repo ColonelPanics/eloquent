@@ -14,6 +14,10 @@ html, body, #container {
 
 .btn {
   @apply inline-block p-2 bg-blue-500 hover:bg-blue-400 text-white hover:text-white;
+
+  &.btn-danger {
+    @apply bg-red-500 hover:bg-red-400
+  }
 }
 
 

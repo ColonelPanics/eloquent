@@ -34,7 +34,7 @@
                     <% end %>
                     <% if i == 0 %>
                       <% if result.tie? %>
-                        ties
+                        drew with
                       <% else %>
                         defeated
                       <% end %>
@@ -56,12 +56,9 @@
         <%= link_to "See all players", players_path, class: "btn" %>
       </div>
       <ul class='ml-8 p-4'>
-        <% @players.each_with_index do |player, index| %>
+        <% @players.each do |player| %>
           <li class="group border-b border-neutral-400">
             <%= link_to player_path(player), class: "flex p-2 gap-4 justify-between items-center" do %>
-              <span class="bg-blue-600 group-first:bg-yellow-500 text-white text-lg aspect-square size-10 flex justify-center items-center font-bold">
-                <%= index + 1 %>
-              </span>
               <%= image_tag(gravatar_url(player, size: 24)) %>
               <span class="grow text-lg">
                 <%= player.name %>

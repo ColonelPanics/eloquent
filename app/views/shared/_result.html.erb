@@ -1,34 +1,36 @@
-<li class="<%= 'new' if result.most_recent? -%>">
+<div class="grid col-span-5 grid-cols-subgrid items-center gap-4 border-b border-neutral-400 p-2">
   <% result.teams.each_with_index do |team, i| %>
-    <% team.players.each do |winner| %>
-      <%= link_to winner, class: 'player' do %>
-        <%= image_tag(gravatar_url(winner, size: 16)) %>
-        <strong> <%= winner.name %></strong>
+    <div class="flex flex-col">
+      <% team.players.each do |winner| %>
+        <%= link_to winner, class: "flex items-center gap-2" do %>
+          <%= image_tag(gravatar_url(winner, size: 16)) %>
+          <strong> <%= winner.name %></strong>
+          <% swing = result.skill_swing(winner) %>
+          <% if swing.positive? %>
+            <skill-swing class="text-green-500 text-sm">+<%= swing %></skill-swing>
+          <% else %>
+            <skill-swing class="text-red-500 text-sm"><%= swing %></skill-swing>
+          <% end %>
+        <% end %>
       <% end %>
-      <% swing = result.skill_swing(winner) %>
-      <% if swing.positive? %>
-        <skill-swing class="positive">+<%= swing %></skill-swing>
-      <% else %>
-        <skill-swing class="negative"><%= swing %></skill-swing>
-      <% end %>
-    <% end %>
+    </div>
     <% if i == 0 %>
-      <% if result.tie? %>
-        <small>ties</small>
-      <% elsif team.winner %>
-        <small>defeats</small>
-      <% else %>
-        <small>loses to</small>
-      <% end %>
+      <span class="text-2xl text-center">
+        <%= result.for %> - <%= result.against %>
+      </span>
     <% end %>
   <% end %>
-  (<%= result.for %> - <%= result.against %>)
   <% if show_game %>
     in
     <strong><%= link_to result.game.name, result.game %></strong>
   <% end %>
-  <time><%= format_time(result.created_at) %></time>
+  <time
+    class="text-xs select-none"
+    title="<%= result.created_at %>"
+  >
+    <%= format_time(result.created_at) %>
+  </time>
   <% if result.most_recent? -%>
-    <%= link_to "Delete", game_result_path(result.game, result), class: "btn btn-danger", method: :delete, confirm: "Are you sure?" %>
+    <%= link_to "Delete", game_result_path(result.game, result), class: "btn btn-danger text-sm self-center justify-self-end", method: :delete, confirm: "Are you sure?" %>
   <% end -%>
-</li>
+</div>
