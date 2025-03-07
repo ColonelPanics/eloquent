@@ -14,11 +14,11 @@
  *= require_self
  */
 
-skill-swing.positive { 
+skill-swing.positive {
     color: green;
 }
 
-skill-swing.negative { 
+skill-swing.negative {
     color: red;
 }
 
@@ -235,7 +235,7 @@ fieldset {
   transition: box-shadow 0.2s ease;
   -webkit-transition: box-shadow 0.2s ease;
   -moz-transition: box-shadow 0.2s ease;
-  font-family: "IBM Plex Mono", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+  font-family: "IBM Plex Mono", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
   height: 28px;
@@ -287,15 +287,15 @@ fieldset {
 }
 
 #games-list {
-  display: grid; 
-  grid-template-columns: 1fr 1fr 1fr; 
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 20px 20px; }
 
 #games-list .game-list-item {
   border: none;
   vertical-align: top;
   box-sizing: border-box;
-  -moz-box-sizing: border-box; 
+  -moz-box-sizing: border-box;
   padding: 0; }
 
 #games-list .game-list-item a {
@@ -509,4 +509,3 @@ select {
     padding: 0 !important; }
   #games-list .game-list-item a {
       min-height: initial; } }
-

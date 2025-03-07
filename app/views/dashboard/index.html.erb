@@ -1,6 +1,6 @@
 <% if @players.length > 1 %>
   <div class="row-fluid">
-    <div class="span8">
+    <div class="span8 text-red-500">
       <h1><%= brand_title %> Games</h1>
 
       <%= turbo_frame_tag "new_game", target: "_top" do %>

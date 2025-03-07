@@ -39,6 +39,10 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
 
+# Tailwind CSS
+gem "tailwindcss-ruby", "~> 4.0"
+gem "tailwindcss-rails", "~> 4.2"
+
 # https://github.com/iain/elo
 gem 'elo'
 # https://github.com/saulabs/trueskill

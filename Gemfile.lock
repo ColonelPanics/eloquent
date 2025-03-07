@@ -272,6 +272,13 @@ GEM
     stimulus-rails (1.2.2)
       railties (>= 6.0.0)
     stringio (3.0.8)
+    tailwindcss-rails (4.2.0)
+      railties (>= 7.0.0)
+      tailwindcss-ruby (~> 4.0)
+    tailwindcss-ruby (4.0.9-aarch64-linux-gnu)
+    tailwindcss-ruby (4.0.9-arm64-darwin)
+    tailwindcss-ruby (4.0.9-x86_64-darwin)
+    tailwindcss-ruby (4.0.9-x86_64-linux-gnu)
     thor (1.2.2)
     timeout (0.4.0)
     turbo-rails (1.4.0)
@@ -324,6 +331,8 @@ DEPENDENCIES
   simplecov_json_formatter
   sprockets-rails
   stimulus-rails
+  tailwindcss-rails (~> 4.2)
+  tailwindcss-ruby (~> 4.0)
   trueskill!
   turbo-rails
   tzinfo-data
