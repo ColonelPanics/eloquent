@@ -1,44 +1,48 @@
+<div class="p-4">
 
+  <% if @team_game %>
+    <h1 class="mb-4">Team Results</h1>
+    <p>
+    This game supports team results. This means that you can either select a singular player per team, or multiple.
+    There is a known issue with this form. If you attempt to submit and nothing happens, it is likely that you have selected the same player in multiple teams.
+    To select multiple players per team, use "shift + click", or "cmd + click" on mac, or "ctrl + click" on windows machines.
+    <% if @result.teams.length > 2 %>You do not need to fill in every team, start on the far left and move towards the right, the minimum requirement is the first two, then the rest are optional.<% end %>
+    </p>
+  <% end %>
 
-<% if @team_game %> 
-  <h2 style="margin-top:0;">Team Results</h2>
-  <p>
-  This game supports team results. This means that you can either select a singular player per team, or multiple. 
-  There is a known issue with this form. If you attempt to submit and nothing happens, it is likely that you have selected the same player in multiple teams. 
-  To select multiple players per team, use "shift + click", or "cmd + click" on mac, or "ctrl + click" on windows machines.
-  <% if @result.teams.length > 2 %>You do not need to fill in every team, start on the far left and move towards the right, the minimum requirement is the first two, then the rest are optional.<% end %>
-  </p>
-<% end %>
-
-<%= form_for [@game, @result], html: {id: "form-results"} do |f| %>
-  <div class='form-fields'>
-    <div class="row-fluid">
-    <% @result.teams.each.with_index do |team, index| %>
-      <div class="span2" style="background-color: <%= index == 0 && '#FFC0C0' || '#C0C0FF' %>">
-      <p style='text-align: center'>
-      <% if index == 0 %>
-        For
-      <% else %>
-        Against
+  <%= form_for [@game, @result] do |f| %>
+    <div class="flex my-4">
+      <% @result.teams.each.with_index do |team, index| %>
+        <div class="grow p-4" style="background-color: <%= index == 0 && '#FFC0C0' || '#C0C0FF' %>">
+          <h3 class="text-center mb-2">
+            Team <%= index + 1 %>
+          </h3>
+          <div class="flex justify-center items-center gap-8">
+            <%=
+              select "result[teams][#{index}]",
+                     "players",
+                     player_options,
+                     {include_blank: false},
+                     class: "w-48 text-lg",
+                     multiple: @team_game,
+                     "data-placeholder" => "Team #{index + 1}"
+            %>
+            <% if index == 0 %>
+              <%= f.number_field :for, step: 1, min: 0, class: "w-16" %>
+            <% else %>
+              <%= f.number_field :against, step: 1, min: 0, class: "w-16" %>
+            <% end %>
+          </div>
+        </div>
       <% end %>
-      </p>
-      <p style='text-align: center'>
-      <%= select "result[teams][#{index}]", "players", player_options, {include_blank: ''}, class: "players", multiple: @team_game, "data-placeholder" => "Team #{index + 1}" %>
-      <% if index == 0 %>
-        <%= f.number_field :for, step: 1, min: 0 %>
-      <% else %>
-        <%= f.number_field :against, step: 1, min: 0 %>
-      <% end %>
-      </p>
+    </div>
+    <div class='form-actions'>
+      <div class="row-fluid">
+      <div class="span4" style='text-align: center'>
+        <%= f.submit class: "btn btn-primary", value: 'Save Result' %>
       </div>
-    <% end %>
+      </div>
     </div>
-  </div>
-  <div class='form-actions'>
-    <div class="row-fluid">
-    <div class="span4" style='text-align: center'>
-      <%= f.submit class: "btn btn-primary", value: 'Save Result' %>
-    </div>
-    </div>
-  </div>
-<% end %>
+  <% end %>
+
+</div>

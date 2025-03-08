@@ -24,6 +24,10 @@ h3 {
   @apply text-lg;
 }
 
+input, select, textarea {
+  @apply border bg-white text-neutral-800 p-2;
+}
+
 .btn {
   @apply inline-block p-2 bg-blue-500 hover:bg-blue-400 text-white hover:text-white;
 
