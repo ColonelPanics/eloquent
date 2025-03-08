@@ -1,74 +1,72 @@
-<div class="hero-unit">
-  <h1><%= @player.name %> — <%= @game.name %> <strong><%= @player.ratings.find_by_game_id(@game).value %></strong></h1>
-</div>
-
-<section class="action-buttons">
-  <%= link_to 'Return to game', game_path(@game), class: "btn" %>
-</section>
-
-<div class="row">
-  <div class="span12">
-    <h2>Statistics</h2>
-    <ul id='games-list' style="grid-template-columns: 1fr 1fr 1fr 1fr">
-      <% forwin = @player.total_wins_on_for(@game) %>
-      <% againstwin = @player.total_wins_on_against(@game) %>
-      <% forpref = (forwin == 0 and @player.total_wins(@game) == 0) && 0.5 || forwin.to_f / @player.total_wins(@game) %> 
-      <% winside = (forpref == 0.5) && 'Evens' || (forpref >0.5 && "#{(forpref * 100).round(2)}% For" || "#{((1 - forpref) * 100).round(2)}% Against") %>
-      <%= render 'stat', name: "Win Distribution", value: winside, description: "#{forwin} For & #{againstwin} Against" %>
-      <% all_streaks = @player.get_streaks(@game) %>
-      <%= render 'stat', name: "Current Streak", value: all_streaks[:current].count, description: all_streaks[:currentType] %>
-      <% win = all_streaks[:win] %>
-      <%= render 'stat', name: "Longest Win", value: win.count, description: win.fromDate != 0 && "(#{win.fromDate.strftime('%Y-%m-%d %H:%M')} to #{win.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
-      <% unbeaten = all_streaks[:unbeaten] %>
-      <%= render 'stat', name: "Longest Unbeaten", value: unbeaten.count, description: unbeaten.fromDate != 0 && "(#{unbeaten.fromDate.strftime('%Y-%m-%d %H:%M')} to #{unbeaten.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
-      <% lose = all_streaks[:lose] %>
-      <%= render 'stat', name: "Longest Lose", value: lose.count, description: lose.fromDate != 0 && "(#{lose.fromDate.strftime('%Y-%m-%d %H:%M')} to #{lose.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
-    </ul>
+<div class="grid grid-cols-2 gap-x-4 gap-y-8 p-4">
+  <div class="flex items-center p-4 gap-4">
+    <h1><%= @player.name %> — <%= @game.name %></h1>
+    <strong><%= @player.ratings.find_by_game_id(@game).value %></strong>
   </div>
-<div>
-<div class="row">
-  <div class="span6">
-    <h2>Head-to-Head Records</h2>
-    <table id='ratings'>
+
+  <section class="flex justify-end items-start">
+    <%= link_to 'Return to game', game_path(@game), class: "btn" %>
+  </section>
+
+  <div>
+    <h2 class="mb-2">Recent Games</h2>
+    <%= render "shared/results", results: @player.results.for_game(@game).limit(15).order('created_at desc'), show_game: false %>
+  </div>
+
+  <div class="row">
+      <h2 class="mb-2">Statistics</h2>
+      <ul class="grid grid-cols-4 gap-4">
+        <% forwin = @player.total_wins_on_for(@game) %>
+        <% againstwin = @player.total_wins_on_against(@game) %>
+        <% forpref = (forwin == 0 and @player.total_wins(@game) == 0) && 0.5 || forwin.to_f / @player.total_wins(@game) %>
+        <% winside = (forpref == 0.5) && 'Evens' || (forpref >0.5 && "#{(forpref * 100).round(2)}% For" || "#{((1 - forpref) * 100).round(2)}% Against") %>
+        <%= render 'stat', name: "Win Distribution", value: winside, description: "#{forwin} For & #{againstwin} Against" %>
+        <% all_streaks = @player.get_streaks(@game) %>
+        <%= render 'stat', name: "Current Streak", value: all_streaks[:current].count, description: all_streaks[:currentType] %>
+        <% win = all_streaks[:win] %>
+        <%= render 'stat', name: "Longest Win", value: win.count, description: win.fromDate != 0 && "(#{win.fromDate.strftime('%Y-%m-%d %H:%M')} to #{win.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
+        <% unbeaten = all_streaks[:unbeaten] %>
+        <%= render 'stat', name: "Longest Unbeaten", value: unbeaten.count, description: unbeaten.fromDate != 0 && "(#{unbeaten.fromDate.strftime('%Y-%m-%d %H:%M')} to #{unbeaten.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
+        <% lose = all_streaks[:lose] %>
+        <%= render 'stat', name: "Longest Lose", value: lose.count, description: lose.fromDate != 0 && "(#{lose.fromDate.strftime('%Y-%m-%d %H:%M')} to #{lose.toDate.strftime('%Y-%m-%d %H:%M')})" || '' %>
+      </ul>
+  </div>
+
+
+  <div>
+    <h2 class="mb-2">Head-to-Head Records</h2>
+    <table class="w-full">
       <thead>
         <tr>
-          <th>Player</th>
-          <th>Rating</th>
-          <th><abbr title='Wins'>W</abbr></th>
-          <th><abbr title='Losses'>L</abbr></th>
+          <th class="text-left">Player</th>
+          <th class="text-right">Rating</th>
+          <th class="text-right">Wins</th>
           <% if @game.allow_ties %>
-            <th><abbr title='Ties'>T</abbr></th>
+            <th class="text-right">Draws</th>
           <% end %>
+          <th class="text-right">Losses</th>
         </tr>
       </thead>
 
       <tbody>
         <% @game.all_ratings.each do |rating| %>
           <% opponent = rating.player %>
+          <% next if opponent == @player %>
           <% wins = @player.wins(@game, opponent) %>
           <% losses = @player.losses(@game, opponent) %>
-          <tr class="<%= "unplayed" if @player != opponent and wins == 0 and losses == 0 %>" >
-            <td>
-              <%= link_to opponent do %>
+          <tr class="border-b border-neutral-400 <%= "text-neutral-400" if wins == 0 and losses == 0 %>" >
+            <td class="p-2">
+              <%= link_to opponent, class: "flex items-center gap-2" do %>
                 <%= image_tag(gravatar_url(opponent, size: 24)) %>
                 <%= opponent.name %>
               <% end %>
             </td>
-            <% unless opponent == @player %>
-              <td><%= rating.value %></td>
-              <td><%= wins %></td>
-              <td><%= losses %></td>
-              <% if @game.allow_ties %>
-                <td><%= @player.ties(@game, opponent) %></td>
-              <% end %>
-            <% else %>
-              <td>–</td>
-              <td>–</td>
-              <td>–</td>
-                <% if @game.allow_ties %>
-                    <td>–</td>
-                <% end %>
+            <td class="text-right"><%= rating.value %></td>
+            <td class="text-right"><%= wins %></td>
+            <% if @game.allow_ties %>
+              <td class="text-right"><%= @player.ties(@game, opponent) %></td>
             <% end %>
+            <td class="text-right"><%= losses %></td>
           </tr>
 
         <% end %>
@@ -77,32 +75,8 @@
     </table>
   </div>
 
-  <div class="span6">
-    <h2>Recent Games</h2>
-    <ul id='results'>
-      <% @player.results.for_game(@game).limit(15).order('created_at desc').each do |result| %>
-        <li>
-          <%= format_time(result.created_at) %>
-          -
-          <% if result.winners.include?(@player) %>
-            <% if result.losers.empty? %>
-              Tied with <strong><%= result.winners.select{|player| player.name != @player.name}.map(&:name).join(", ") %></strong>
-            <% else %>
-              Won against <strong><%= result.losers.map(&:name).join(", ") %></strong>
-            <% end %>
-          <% else %>
-            Lost to <strong><%= result.winners.map(&:name).join(", ") %></strong>
-          <% end %>
-          <% if result.most_recent? -%>
-            <%= link_to "Delete", game_result_path(@game, result), class: "btn btn-danger", method: :delete, confirm: "Are you sure?" %>
-          <% end -%>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-</div>
-
-<div class="row">
-  <h2>Progress</h2>
+  <div class="row">
+    <h2>Progress</h2>
     <%= line_chart @chart_data, min: nil, max: nil, xtitle: 'Matches', ytitle: @game.rating_type.capitalize, curve: false, discrete: true %>
+  </div>
 </div>
