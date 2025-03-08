@@ -6,5 +6,6 @@ class PlayerGamesController < ApplicationController
                       .where(player_id: @player.id)
                       .flat_map(&:history_events)
                       .map { |event| [event.created_at, event.value] }
+                      .sort_by(&:first)
   end
 end
