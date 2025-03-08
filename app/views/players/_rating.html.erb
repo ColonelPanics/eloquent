@@ -1,1 +1,6 @@
-<li><%= link_to rating.game.name, player_game_path(@player, rating.game) %> - <%= rating.value %></li>
+<%= link_to player_game_path(@player, rating.game), class: "border border-neutral-400 hover:bg-neutral-50 p-4 flex flex-col items-center" do %>
+  <span class="text-xs text-neutral-400">
+    <%= rating.game.name %>
+  </span>
+  <%= rating.value %>
+<% end %>

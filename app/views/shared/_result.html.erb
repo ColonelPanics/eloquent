@@ -1,4 +1,11 @@
-<div class="grid col-span-5 grid-cols-subgrid items-center gap-4 border-b border-neutral-400 p-2">
+<%
+    span_class = show_game ? "col-span-6" : "col-span-5"
+%>
+
+<div class="grid <%= span_class %> grid-cols-subgrid items-center gap-4 border-b border-neutral-400 p-2">
+  <% if show_game %>
+    <%= link_to result.game.name, result.game, class: "text-sm" %>
+  <% end %>
   <% result.teams.each_with_index do |team, i| %>
     <div class="flex flex-col">
       <% team.players.each do |winner| %>
@@ -19,10 +26,6 @@
         <%= result.for %> - <%= result.against %>
       </span>
     <% end %>
-  <% end %>
-  <% if show_game %>
-    in
-    <strong><%= link_to result.game.name, result.game %></strong>
   <% end %>
   <time
     class="text-xs select-none"
