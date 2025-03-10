@@ -36,7 +36,7 @@ input, select, textarea {
   @apply inline-block p-2 bg-blue-500 hover:bg-blue-400 text-white hover:text-white cursor-pointer;
 
   &.btn-primary {
-    @apply bg-yellow-600 hover:bg-yellow-500;
+    @apply bg-yellow-500 hover:bg-yellow-400;
   }
 
   &.btn-danger {
