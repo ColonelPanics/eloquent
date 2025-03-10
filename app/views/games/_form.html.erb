@@ -1,42 +1,54 @@
-<div class="form-well game-card" data-controller="game">
-  <%= form_with model: game do |f| %>
+<div
+  class="p-4"
+  data-controller="game"
+>
+  <%= form_with model: game, class: "grid grid-cols-[1fr_2fr] gap-4" do |f| %>
     <%= f.hidden_field :min_number_of_players_per_team, value: 1 %>
     <%= f.hidden_field :min_number_of_teams, value: 2 %>
-    <div class="control-group">
-      <%= f.label :name, class: "control-label" %>
-      <div class="controls">
-        <%= f.text_field :name, class: "input-xlarge" %>
+
+    <%= f.label :name, class: "control-label" %>
+    <%= f.text_field :name, class: "input-xlarge" %>
+
+    <%= f.label :rating_type, class: "control-label" %>
+    <%= f.select :rating_type,
+          Game::RATER_MAPPINGS.map{|k, v| [v.description, k]},
+          {},
+          class: "input-xlarge",
+          data: {
+            action: 'change->game#handleRatingChange', 'game-target': 'rating'
+          }
+    %>
+
+    <div
+      class="col-span-2 grid grid-cols-subgrid"
+      data-game-target="maxPlayersGroup"
+    >
+      <%= f.label :max_number_of_players_per_team, 'Maximum number of players per team' %>
+      <div class="flex flex-col">
+        <%= f.number_field :max_number_of_players_per_team, data: { 'game-target': 'maxPlayers' } %>
+        <small class="text-sm text-neutral-400">Set to blank for no restriction</small>
       </div>
     </div>
-    <div class="control-group">
-      <%= f.label :rating_type, class: "control-label" %>
-      <div>
-        <%= f.select :rating_type, Game::RATER_MAPPINGS.map{|k, v| [v.description, k]}, {}, class: "input-xlarge", data: { action: 'change->game#handleRatingChange', 'game-target': 'rating' } %>
+
+    <div
+      class="col-span-2 grid grid-cols-subgrid"
+      data-game-target="maxTeamsGroup"
+    >
+      <%= f.label :max_number_of_teams, 'Maximum number of teams' %>
+      <div class="flex flex-col">
+        <%= f.number_field :max_number_of_teams %>
+        <small class="text-sm text-neutral-400">Set to blank for no restriction</small>
       </div>
     </div>
-    <div class="control-group" data-game-target="maxPlayersGroup">
-      <%= f.label :max_number_of_players_per_team, 'Maximum number of players per team', class: "control-label" %>
-      <div class="controls">
-        <%= f.number_field :max_number_of_players_per_team, class: "input-mini", data: { 'game-target': 'maxPlayers' } %>
-        <span class="help-inline">Set to blank for no restriction</span>
-      </div>
-    </div>
-    <div class="control-group" data-game-target="maxTeamsGroup">
-      <%= f.label :max_number_of_teams, 'Maximum number of teams', class: "control-label" %>
-      <div class="controls">
-        <%= f.number_field :max_number_of_teams, class: "input-mini" %>
-        <span class="help-inline">Set to blank for no restriction</span>
-      </div>
-    </div>
-    <div class="control-group">
-      <div class="controls">
-        <%= f.check_box :allow_ties, class: "input-mini" %>
-        <%= f.label :allow_ties, class: "control-label" %>
-      </div>
-    </div>
-    <div class="form-actions">
+
+    <%= f.label :allow_ties, class: "col-start-2" do %>
+      <%= f.check_box :allow_ties %>
+      Allow ties
+    <% end %>
+
+    <div class="col-start-2">
       <%= f.button class: "btn btn-primary" %>
-      <%= link_to "Cancel", root_path, class: "btn btn-warning" %>
+      <%= link_to "Cancel", root_path, class: "btn" %>
     </div>
   <% end %>
 </div>

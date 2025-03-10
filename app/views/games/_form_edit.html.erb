@@ -2,11 +2,11 @@
   class="p-4"
   data-controller="game"
 >
-  <%= form_with model: game, class: "grid grid-cols-[auto_1fr] gap-4" do |f| %>
-    <%= f.label :name, class: "control-label" %>
-    <%= f.text_field :name, class: "input-xlarge" %>
+  <%= form_with model: game, class: "grid grid-cols-[1fr_2fr] gap-4" do |f| %>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
 
-    <span class="control-label">Rating type</span>
+    <span>Rating type</span>
     <input type="text" disabled readonly value="<%= game.rater.description %>" />
 
     <% if game.rating_type != 'elo' %>
@@ -31,7 +31,7 @@
       Allow ties
     <% end %>
 
-    <div class="col-start-1">
+    <div class="col-start-2">
       <%= f.button class: "btn btn-primary" %>
       <%= button_to "Cancel", game_path(game), class: "btn" %>
     </div>

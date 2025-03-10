@@ -26,6 +26,10 @@ h3 {
 
 input, select, textarea {
   @apply border bg-white text-neutral-800 p-2;
+
+  &.disabled, &:disabled {
+    @apply text-neutral-500;
+  }
 }
 
 .btn {

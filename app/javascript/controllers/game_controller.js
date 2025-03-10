@@ -10,8 +10,8 @@ export default class extends Controller {
       this.maxTeamsGroupTarget.style.display = 'none';
     } else {
       this.maxPlayersTarget.value = 2
-      this.maxPlayersGroupTarget.style.display = 'block';
-      this.maxTeamsGroupTarget.style.display = 'block';
+      this.maxPlayersGroupTarget.style.display = 'grid';
+      this.maxTeamsGroupTarget.style.display = 'grid';
     }
   }
 
