@@ -14,7 +14,7 @@
   <div class="overflow-y-auto min-h-0">
     <div class="flex justify-between items-center">
       <h2 class="text-2xl mb-4">Recent Results</h2>
-      <%= link_to "Add Result", new_game_result_path(@game), class: "btn btn-primary" %>
+      <%= link_to "Add Result", new_game_result_path(@game), class: "btn" %>
     </div>
     <% if @game.recent_results.any? %>
       <%= render partial: 'shared/results', object: @game.recent_results, locals: {show_game: false} %>
