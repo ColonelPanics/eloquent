@@ -13,7 +13,7 @@
   <%= form_for [@game, @result] do |f| %>
     <div class="flex my-4">
       <% @result.teams.each.with_index do |team, index| %>
-        <div class="grow p-4" style="background-color: <%= index == 0 && '#FFC0C0' || '#C0C0FF' %>">
+        <div class="<%= class_names("grow p-4", { "bg-team-red-light": index == 0, "bg-team-blue-light": index != 0 }) %>">
           <h3 class="text-center mb-2">
             Team <%= index + 1 %>
           </h3>
