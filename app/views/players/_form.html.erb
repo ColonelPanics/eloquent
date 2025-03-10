@@ -1,23 +1,23 @@
-<div class="player-card form-well">
-  <%= form_with model: player do |f| %>
-    <div class="control-group">
-      <%= f.label :name, class: "control-label" %>
-      <div class="controls">
-        <%= f.text_field :name, class: "input-xlarge" %>
-      </div>
+<div class="p-4">
+  <%= form_with model: player, class: "grid grid-cols-[1fr_2fr] gap-4 items-center" do |f| %>
+
+    <%= f.label :name %>
+    <div class="flex flex-col">
+      <%= f.text_field :name, class: "w-full" %>
       <%= errors_for player, :name %>
     </div>
-    <div class="control-group">
-      <%= f.label :email, class: "control-label" %>
-      <div class="controls">
-        <%= f.text_field :email, class: "input-xlarge" %>
-      </div>
+
+    <%= f.label :email %>
+    <div class="flex flex-col items-stretch">
+      <%= f.text_field :email, class: "w-full" %>
       <%= errors_for player, :email %>
     </div>
-    <div class="form-actions">
+
+    <div class="col-start-2">
       <%= f.button class: "btn btn-primary" %>
-      <%= button_to "Cancel", players_path, class: "btn btn-warning" %>
+      <%= link_to "Cancel", players_path, class: "btn" %>
     </div>
+
     <small class="description attribution">
       Avatar provided by <a href="http://gravatar.com/">Gravatar</a>, a global avatar service.
     </small>
