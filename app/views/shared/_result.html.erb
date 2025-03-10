@@ -1,5 +1,21 @@
 <%
     span_class = show_game ? "col-span-6" : "col-span-5"
+    result_classes = "score-draw"
+    if result.for && result.against
+      result_classes = if result.for > result.against
+        if result.against == 0
+          result_classes = "score-red-wins-10"
+        else
+          result_classes = "score-red-wins"
+        end
+      elsif result.against > result.for
+        if result.for == 0
+          result_classes = "score-blue-wins-10"
+        else
+          result_classes = "score-blue-wins"
+        end
+      end
+    end
 %>
 
 <div class="grid <%= span_class %> grid-cols-subgrid items-center gap-4 border-b border-neutral-400 p-2">
@@ -22,9 +38,11 @@
       <% end %>
     </div>
     <% if i == 0 %>
-      <span class="text-2xl text-center">
-        <%= result.for %> - <%= result.against %>
-      </span>
+      <div class="flex flex-col items-center p-1 <%= result_classes %>">
+        <span class="text-2xl text-center px-4 border bg-white">
+          <%= result.for %> &ndash; <%= result.against %>
+        </span>
+      </div>
     <% end %>
   <% end %>
   <time

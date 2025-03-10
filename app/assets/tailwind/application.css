@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-team-red: #FF0000;
+  --color-team-red-light: #FFAAAA;
+  --color-team-blue: #0000FF;
+  --color-team-blue-light: #AAAAFF;
+  --color-champion: var(--color-yellow-500);
+}
+
 html, body, #container {
   @apply w-full h-full;
 }
@@ -33,10 +41,10 @@ input, select, textarea {
 }
 
 .btn {
-  @apply inline-block p-2 bg-blue-500 hover:bg-blue-400 text-white hover:text-white cursor-pointer;
+  @apply inline-block p-2 bg-blue-600 hover:bg-blue-500 text-white hover:text-white cursor-pointer;
 
   &.btn-primary {
-    @apply bg-yellow-500 hover:bg-yellow-400;
+    @apply bg-champion hover:bg-yellow-400;
   }
 
   &.btn-danger {
@@ -51,4 +59,21 @@ a {
 
 header a {
   @apply text-white hover:text-neutral-200;
+}
+
+.score-red-wins {
+  background: linear-gradient(90deg, var(--color-team-red) 50%, var(--color-team-blue-light) 50%);
+}
+
+.score-red-wins-10 {
+  background: linear-gradient(90deg, var(--color-champion) 50%, var(--color-team-blue-light) 50%);
+}
+.score-blue-wins {
+  background: linear-gradient(90deg, var(--color-team-red-light) 50%, var(--color-team-blue) 50%);
+}
+.score-blue-wins-10 {
+  background: linear-gradient(90deg, var(--color-team-red-light) 50%, var(--color-champion) 50%);
+}
+.score-draw {
+  background: linear-gradient(90deg, var(--color-team-red-light) 50%, var(--color-team-blue-light) 50%);
 }
