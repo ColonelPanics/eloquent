@@ -2,7 +2,14 @@ class PlayersController < ApplicationController
   before_action :set_player, only: [:edit, :destroy, :show, :update]
 
   def index
-    @players = Player.order(id: :desc)
+    @players = Player.order(:name)
+
+    @players = @players.where('name LIKE ?', "#{params[:q]}%") if params[:q]
+
+    respond_to do |f|
+      f.html
+      f.json { render json: @players.map { |p| { value: p.id, text: p.name } } }
+    end
   end
 
   def create

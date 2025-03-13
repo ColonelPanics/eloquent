@@ -10,3 +10,4 @@ pin_all_from 'app/javascript/controllers', under: 'controllers'
 pin 'chartkick', to: 'chartkick.js'
 pin 'Chart.bundle', to: 'Chart.bundle.js'
 pin 'el-transition', to: 'https://ga.jspm.io/npm:el-transition@0.0.7/index.js'
+pin "@wizardhealth/stimulus-multiselect", to: "https://ga.jspm.io/npm:@wizardhealth/stimulus-multiselect@1.0.0/src/multiselect.js"

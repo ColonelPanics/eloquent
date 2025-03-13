@@ -3,10 +3,10 @@
   <% if @team_game %>
     <h1 class="mb-4">Team Results</h1>
     <p>
-    This game supports team results. This means that you can either select a singular player per team, or multiple.
-    There is a known issue with this form. If you attempt to submit and nothing happens, it is likely that you have selected the same player in multiple teams.
-    To select multiple players per team, use "shift + click", or "cmd + click" on mac, or "ctrl + click" on windows machines.
-    <% if @result.teams.length > 2 %>You do not need to fill in every team, start on the far left and move towards the right, the minimum requirement is the first two, then the rest are optional.<% end %>
+      This game supports team results. This means that you can either select a singular player per team, or multiple.
+      <% if @result.teams.length > 2 %>
+        You do not need to fill in every team, start on the far left and move towards the right, the minimum requirement is the first two, then the rest are optional.
+      <% end %>
     </p>
   <% end %>
 
@@ -18,15 +18,37 @@
             Team <%= index + 1 %>
           </h3>
           <div class="flex justify-center items-center gap-8">
-            <%=
-              select "result[teams][#{index}]",
-                     "players",
-                     player_options,
-                     {include_blank: false},
-                     class: "w-48 text-lg",
-                     multiple: @team_game,
-                     "data-placeholder" => "Team #{index + 1}"
-            %>
+
+            <% if @team_game %>
+              <div
+                data-controller="multiselect"
+                data-multiselect-preload-url-value="<%= players_path(format: :json) %>"
+                data-multiselect-search-url-value="<%= players_path(format: :json) %>"
+                data-placeholder="Search for players..."
+              >
+                <%=
+                  select "result[teams][#{index}]",
+                        "players",
+                        [],
+                        {},
+                        class: "multiselect__hidden",
+                        multiple: true,
+                        data: {
+                          "multiselect-target": "hidden"
+                        }
+                %>
+              </div>
+            <% else %>
+                <%=
+                  select "result[teams][#{index}]",
+                         "players",
+                         player_options,
+                         {include_blank: false},
+                         class: "w-48 text-lg",
+                         "data-placeholder" => "Team #{index + 1}"
+                %>
+            <% end %>
+
             <% if index == 0 %>
               <%= f.number_field :for, step: 1, min: 0, class: "w-16" %>
             <% else %>

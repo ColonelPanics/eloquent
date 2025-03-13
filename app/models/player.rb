@@ -24,13 +24,6 @@ class Player < ApplicationRecord
   validates :name, uniqueness: true, presence: true
   validates :email, allow_blank: true, format: { with: /@/, message: "expected an @ character" }
 
-  def as_json
-    {
-      name: name,
-      email: email
-    }
-  end
-
   def recent_results
     results.order("results.created_at DESC").limit(5)
   end
@@ -83,23 +76,23 @@ class Player < ApplicationRecord
     results = self.results.where(game_id: game)
 
     for result in results
-      # Identify whether this match was a win, loss or draw 
+      # Identify whether this match was a win, loss or draw
       won_game = result.winners.include?(self) && !result.tie?
       lost_game = !result.winners.include?(self) && !result.tie?
       tie_game = result.tie?
 
       # Continue win streak if we're on one
-      if (won_game and currentStreak.win) 
+      if (won_game and currentStreak.win)
         # Add to win streak
         currentStreak.resultTimes.append(result.created_at)
         # Add to current unbeaten streak
         currentStreakUnbeaten.resultTimes.append(result.created_at)
       # Continue loss streak if we're on one
       elsif (lost_game and not currentStreak.win)
-        # Add to loss streak 
+        # Add to loss streak
         currentStreak.resultTimes.append(result.created_at)
       # Add to unbeaten run if we're on one
-      elsif tie_game and currentStreak.win 
+      elsif tie_game and currentStreak.win
         # Add to current unbeaten streak
         currentStreakUnbeaten.resultTimes.append(result.created_at)
       end
