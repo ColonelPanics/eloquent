@@ -24,4 +24,8 @@ module ApplicationHelper
   def brand_title
     ENV.fetch("ELOVATION_TITLE", "Elovation")
   end
+
+  def all_games
+    Game.order(:name).all
+  end
 end

@@ -9,3 +9,4 @@ pin_all_from 'app/javascript/controllers', under: 'controllers'
 # Charting library
 pin 'chartkick', to: 'chartkick.js'
 pin 'Chart.bundle', to: 'Chart.bundle.js'
+pin 'el-transition', to: 'https://ga.jspm.io/npm:el-transition@0.0.7/index.js'

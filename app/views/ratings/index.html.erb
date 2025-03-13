@@ -2,13 +2,14 @@
   <table id='ratings'>
     <thead>
       <tr>
-        <th>Player</th>
-        <th>Rating</th>
-        <th>W</th>
-        <th>L</th>
+        <th class="text-left">Rank</th>
+        <th class="text-left">Player</th>
+        <th class="text-right">Wins</th>
         <% if @game.allow_ties %>
-          <th>T</th>
+          <th class="text-right">Ties</th>
         <% end %>
+        <th class="text-right">Losses</th>
+        <th class="text-right">Rating</th>
       </tr>
     </thead>
     <tbody>

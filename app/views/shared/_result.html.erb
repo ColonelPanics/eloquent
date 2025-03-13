@@ -1,34 +1,57 @@
-<li class="<%= 'new' if result.most_recent? -%>">
-  <% result.teams.each_with_index do |team, i| %>
-    <% team.players.each do |winner| %>
-      <%= link_to winner, class: 'player' do %>
-        <%= image_tag(gravatar_url(winner, size: 16)) %>
-        <strong> <%= winner.name %></strong>
-      <% end %>
-      <% swing = result.skill_swing(winner) %>
-      <% if swing.positive? %>
-        <skill-swing class="positive">+<%= swing %></skill-swing>
-      <% else %>
-        <skill-swing class="negative"><%= swing %></skill-swing>
-      <% end %>
-    <% end %>
-    <% if i == 0 %>
-      <% if result.tie? %>
-        <small>ties</small>
-      <% elsif team.winner %>
-        <small>defeats</small>
-      <% else %>
-        <small>loses to</small>
-      <% end %>
-    <% end %>
-  <% end %>
-  (<%= result.for %> - <%= result.against %>)
+<%
+    span_class = show_game ? "col-span-6" : "col-span-5"
+    result_classes = "score-draw"
+    if result.for && result.against
+      result_classes = if result.for > result.against
+        if result.against == 0
+          result_classes = "score-red-wins-10"
+        else
+          result_classes = "score-red-wins"
+        end
+      elsif result.against > result.for
+        if result.for == 0
+          result_classes = "score-blue-wins-10"
+        else
+          result_classes = "score-blue-wins"
+        end
+      end
+    end
+%>
+
+<div class="grid <%= span_class %> grid-cols-subgrid items-center gap-4 border-b border-neutral-400 p-2">
   <% if show_game %>
-    in
-    <strong><%= link_to result.game.name, result.game %></strong>
+    <%= link_to result.game.name, result.game, class: "text-sm" %>
   <% end %>
-  <time><%= format_time(result.created_at) %></time>
+  <% result.teams.each_with_index do |team, i| %>
+    <div class="flex flex-col">
+      <% team.players.each do |winner| %>
+        <%= link_to winner, class: "flex items-center gap-2" do %>
+          <%= image_tag(gravatar_url(winner, size: 16)) %>
+          <strong> <%= winner.name %></strong>
+          <% swing = result.skill_swing(winner) %>
+          <% if swing.positive? %>
+            <skill-swing class="text-green-500 text-sm">+<%= swing %></skill-swing>
+          <% else %>
+            <skill-swing class="text-red-500 text-sm"><%= swing %></skill-swing>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+    <% if i == 0 %>
+      <div class="flex flex-col items-center p-1 <%= result_classes %>">
+        <span class="text-2xl text-center px-4 border bg-white">
+          <%= result.for %> &ndash; <%= result.against %>
+        </span>
+      </div>
+    <% end %>
+  <% end %>
+  <time
+    class="text-xs select-none"
+    title="<%= result.created_at %>"
+  >
+    <%= format_time(result.created_at) %>
+  </time>
   <% if result.most_recent? -%>
-    <%= link_to "Delete", game_result_path(result.game, result), class: "btn btn-danger", data: {"turbo-method": :delete, "turbo-confirm": "Are you sure?"} %>
+    <%= link_to "Delete", game_result_path(result.game, result), class: "btn btn-danger text-sm self-center justify-self-end", data: {"turbo-method": :delete, "turbo-confirm": "Are you sure?"} %>
   <% end -%>
-</li>
+</div>

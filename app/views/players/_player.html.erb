@@ -1,9 +1,21 @@
 <%= turbo_frame_tag player do %>
-  <li class="player-card">
-    <%= link_to player_path(player), data: { turbo: false } do %>
-      <%= image_tag(gravatar_url(player, size: 80)) %>
-      <h3> <%= player.name %> </h3>
-      <p> <%= player.email %> <%= player.ratings.last && player.ratings.last.value || 'n/a' %> </p>
+  <li class="border-b border-neutral-400 p-1">
+    <%= link_to player_path(player), class: "flex items-center gap-8 hover:bg-blue-50", data: { turbo: false } do %>
+      <%= image_tag(gravatar_url(player, size: 48)) %>
+      <h3 class="text-lg">
+        <%= player.name %>
+      </h3>
+      <span class="grow">
+        <%= player.email %>
+      </span>
+      <% all_games.each do |game| %>
+        <div class="flex flex-col items-center">
+          <span class="text-xs text-neutral-400">
+            <%= game.name %>
+          </span>
+          <%= player.ratings.where(game: game).last&.value || 'n/a' %>
+        </div>
+      <% end %>
     <% end %>
   </li>
 <% end %>
