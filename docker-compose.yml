@@ -1,7 +1,7 @@
 services:
   db:
-    ports:
-      - 5432:5432
+    #    ports:
+    #  - 5432:5432
     image: postgres
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
