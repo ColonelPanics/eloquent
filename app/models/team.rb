@@ -1,6 +1,5 @@
 class Team < ApplicationRecord
-
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
   has_many :players, through: :memberships
   belongs_to :result, optional: true
 
@@ -9,6 +8,6 @@ class Team < ApplicationRecord
   }
 
   scope :losers, -> {
-    where(:winner => false) {|loser| !loser.result.tie?}
+    where(:winner => false) { |loser| !loser.result.tie? }
   }
 end

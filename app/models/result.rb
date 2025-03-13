@@ -1,5 +1,5 @@
 class Result < ApplicationRecord
-  has_many :teams
+  has_many :teams, dependent: :destroy
   belongs_to :game, touch: true
 
   validates :for, presence: true, numericality: { only_integer: true }
@@ -56,7 +56,7 @@ class Result < ApplicationRecord
       side = 'tie'
     else
       # If 'For' side won
-      if self.for > self.against 
+      if self.for > self.against
         winteam = teams.first
         winscore = self.for
         loseteam = teams.last
@@ -84,7 +84,7 @@ class Result < ApplicationRecord
   end
 
   def losers
-    # Returns an array of Player objects that lost the match 
+    # Returns an array of Player objects that lost the match
     verdict[1]
   end
 
@@ -94,13 +94,13 @@ class Result < ApplicationRecord
   end
 
   def winscore
-    # A way to access the score of the winner so later things don't 
+    # A way to access the score of the winner so later things don't
     # need to decide whether for or against score were the winners
     verdict[3].to_f
   end
 
   def losescore
-    # A way to access the score of the loser so later things don't 
+    # A way to access the score of the loser so later things don't
     # need to decide whether for or against score were the losers
     verdict[4].to_f
   end
@@ -140,7 +140,7 @@ class Result < ApplicationRecord
   def skill_swing(player)
     # Calculate how the rating changed for player by comparing the skill rating
     # in this match to the one from previous
-    
+
     # The RatingHistoryEvent is created before the result, check for one created a second before the result
     this_skill = RatingHistoryEvent.includes(:rating).where(:created_at => (self.created_at - 1.seconds)..self.created_at, ratings: { player_id: player, game_id: self.game_id }).first.value
 
@@ -152,7 +152,7 @@ class Result < ApplicationRecord
       prev_skill = Game.find(self.game_id).rater.default_attributes[:value]
     else
       # The RatingHistoryEvent is created before the result, check for one created a second before the result
-      prev_skill = RatingHistoryEvent.includes(:rating).where(:created_at => (prev_result.created_at - 1.seconds)..prev_result.created_at, ratings: { player_id: player, game_id: prev_result.game_id }).first.value  
+      prev_skill = RatingHistoryEvent.includes(:rating).where(:created_at => (prev_result.created_at - 1.seconds)..prev_result.created_at, ratings: { player_id: player, game_id: prev_result.game_id }).first.value
     end
     return (this_skill - prev_skill)
   end
