@@ -1,8 +1,8 @@
 <div class="p-4">
 
-  <% if @team_game %>
+  <% if team_game? %>
     <h1 class="mb-4">Team Results</h1>
-    <p>
+    <p class="mb-4">
       This game supports team results. This means that you can either select a singular player per team, or multiple.
       <% if @result.teams.length > 2 %>
         You do not need to fill in every team, start on the far left and move towards the right, the minimum requirement is the first two, then the rest are optional.
@@ -11,19 +11,34 @@
   <% end %>
 
   <%= form_for [@game, @result] do |f| %>
+    <% if @result.errors.include?(:teams) %>
+      <div class="border border-red-500 bg-red-100 text-red-500 p-4 w-1/2 mx-auto">
+        <%= @result.errors.full_messages_for(:teams).join("; ") %>
+      </div>
+    <% end %>
     <div class="flex my-4">
       <% @result.teams.each.with_index do |team, index| %>
         <div class="<%= class_names("grow p-4", { "bg-team-red-light": index == 0, "bg-team-blue-light": index != 0 }) %>">
           <h3 class="text-center mb-2">
             Team <%= index + 1 %>
           </h3>
-          <div class="flex justify-center items-center gap-8">
+          <div class="flex justify-evenly items-center gap-8">
 
-            <% if @team_game %>
+            <% unless index == 0 %>
+              <div class="flex flex-col items-center">
+                <%= f.number_field :against, step: 1, min: 0, class: "w-32 text-xl" %>
+                <div class="text-red-500">
+                  <%= @result.errors.messages_for(:against).join("; ") %>
+                </div>
+              </div>
+            <% end %>
+
+            <% if team_game? %>
               <div
                 data-controller="multiselect"
                 data-multiselect-preload-url-value="<%= players_path(format: :json) %>"
                 data-multiselect-search-url-value="<%= players_path(format: :json) %>"
+                data-multiselect-selected-value="<%= team.players.map { |p| { value: p.id, text: p.name } }.to_json %>"
                 data-placeholder="Search for players..."
               >
                 <%=
@@ -50,10 +65,14 @@
             <% end %>
 
             <% if index == 0 %>
-              <%= f.number_field :for, step: 1, min: 0, class: "w-16" %>
-            <% else %>
-              <%= f.number_field :against, step: 1, min: 0, class: "w-16" %>
+              <div class="flex flex-col items-center">
+                <%= f.number_field :for, step: 1, min: 0, class: "w-32 text-xl" %>
+                <div class="text-red-500">
+                  <%= @result.errors.messages_for(:for).join("; ") %>
+                </div>
+              </div>
             <% end %>
+
           </div>
         </div>
       <% end %>

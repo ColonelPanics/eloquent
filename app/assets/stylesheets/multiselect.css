@@ -6,7 +6,6 @@
   padding-left: 0.5rem;
   background: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>") no-repeat right #ddd;
   background-color: white;
-  border-radius: 0.25rem;
   appearance: none;
   border: 1px solid rgb(218 218 218);
   outline-offset: 2px;
@@ -17,6 +16,7 @@
   font-weight: 400;
   font-size: 0.875rem;
   cursor: pointer;
+  min-width: 32rem;
 }
 
 .multiselect__no-result {
@@ -75,14 +75,11 @@
   padding-left: 0.5rem;
   background-color: rgb(250 249 244);
   border: 1px solid #f0f0f0;
-  border-radius: 0.25rem;
   display: flex;
 }
 
 .multiselect__pill-delete {
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
-  border-top-right-radius: 0.25rem;
-  border-bottom-right-radius: 0.25rem;
   align-items: center;
   display: flex;
   margin-left: 0.25rem;
@@ -186,16 +183,6 @@
   display: flex;
 }
 
-.multiselect__list li:first-child {
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-}
-
-.multiselect__list li:last-child {
-  border-bottom-left-radius: 0.25rem;
-  border-bottom-right-radius: 0.25rem;
-}
-
 .multiselect__list li input {
   margin-right: 0.75rem;
 }
@@ -207,7 +194,6 @@
   background-color: rgb(255 255 255);
   border: 1px solid rgb(218 218 218);
   width: 100%;
-  border-radius: 0.25rem;
   display: none;
   margin-top: 0.5rem;
   z-index: 50;
