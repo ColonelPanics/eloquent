@@ -10,7 +10,6 @@ class ResultsController < ApplicationController
       redirect_to game_path(@game)
     else
       @result = response.result
-      p @result.teams
       @result.teams.build while @result.teams.length < max_number_of_teams
       render :new, status: 422
     end

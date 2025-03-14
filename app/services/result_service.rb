@@ -21,8 +21,6 @@ class ResultService
       result.loseteam.winner = false
     end
 
-    p result.teams
-
     if result.valid?
       Result.transaction do
         game.rater.update_ratings game, result

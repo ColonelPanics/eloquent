@@ -9,8 +9,6 @@ export default class extends Multiselect {
   addableEvent() {
     super.addableEvent();
 
-    console.log(this.searchTarget.value, this.addableUrlValue);
-
     fetch(this.addableUrlValue, {
       method: "POST",
       headers: {
