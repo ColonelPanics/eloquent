@@ -45,11 +45,7 @@ class PlayersController < ApplicationController
 
   def destroy
     @player.destroy
-
-    respond_to do |f|
-      f.turbo_stream { render turbo_stream: turbo_stream.remove(@player) }
-      f.html { redirect_to players_path }
-    end
+    redirect_to players_path
   end
 
   def edit
