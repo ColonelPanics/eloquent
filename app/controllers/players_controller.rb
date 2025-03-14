@@ -14,11 +14,24 @@ class PlayersController < ApplicationController
 
   def create
     @player = Player.new(player_params)
+    saved = @player.save
 
-    if @player.save
-      redirect_to players_path
-    else
-      render :new, status: :unprocessable_entity
+    respond_to do |f|
+      f.html do
+        if saved
+          redirect_to players_path
+        else
+          render :new, status: :unprocessable_entity
+        end
+      end
+
+      f.json do
+        if saved
+          render json: { text: @player.name, value: @player.id }
+        else
+          render json: { errors: @player.errors.full_messages }, status: :unprocessable_entity
+        end
+      end
     end
   end
 

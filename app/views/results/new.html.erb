@@ -45,7 +45,9 @@
 
             <% if team_game? %>
               <div
+                data-addable-placeholder="Add new player"
                 data-controller="multiselect"
+                data-multiselect-addable-url-value=<%= players_path(format: :json) %>
                 data-multiselect-preload-url-value="<%= players_path(format: :json) %>"
                 data-multiselect-search-url-value="<%= players_path(format: :json) %>"
                 data-multiselect-selected-value="<%= team.players.map { |p| { value: p.id, text: p.name } }.to_json %>"

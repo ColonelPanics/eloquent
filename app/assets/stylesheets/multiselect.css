@@ -22,7 +22,6 @@
 .multiselect__no-result {
   color: rgb(112 112 112);
   padding: 0.75rem;
-  font-size: 0.875rem;
 }
 
 .multiselect__addable-button {
@@ -157,6 +156,7 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
+  font-size: 1.5rem;
 }
 
 .multiselect__list li {
