@@ -20,45 +20,47 @@ html, body, #container {
   @apply grow;
 }
 
-h1 {
-  @apply text-2xl;
-}
-
-h2 {
-  @apply text-xl;
-}
-
-h3 {
-  @apply text-lg;
-}
-
-input, select, textarea {
-  @apply border bg-white text-neutral-800 p-2;
-
-  &.disabled, &:disabled {
-    @apply text-neutral-500;
-  }
-}
-
-.btn {
-  @apply inline-block p-2 bg-blue-600 hover:bg-blue-500 text-white hover:text-white cursor-pointer;
-
-  &.btn-primary {
-    @apply bg-champion hover:bg-yellow-400;
+@layer components {
+  h1 {
+    @apply text-2xl;
   }
 
-  &.btn-danger {
-    @apply bg-red-500 hover:bg-red-400
+  h2 {
+    @apply text-xl;
   }
-}
+
+  h3 {
+    @apply text-lg;
+  }
+
+  input, select, textarea {
+    @apply border bg-white text-neutral-800 p-2;
+
+    &.disabled, &:disabled {
+      @apply text-neutral-500;
+    }
+  }
+
+  .btn {
+    @apply inline-block p-2 bg-blue-600 hover:bg-blue-500 text-white hover:text-white cursor-pointer;
+
+    &.btn-primary {
+      @apply bg-champion hover:bg-yellow-400;
+    }
+
+    &.btn-danger {
+      @apply bg-red-500 hover:bg-red-400
+    }
+  }
 
 
-a {
-  @apply text-blue-500 hover:text-blue-400
-}
+  a {
+    @apply text-blue-500 hover:text-blue-400
+  }
 
-header a {
-  @apply text-white hover:text-neutral-200;
+  header a {
+    @apply text-white hover:text-neutral-200;
+  }
 }
 
 .score-red-wins {
