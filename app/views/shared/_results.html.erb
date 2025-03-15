@@ -3,5 +3,5 @@
 %>
 
 <div class="grid <%= cols %> items-center">
-  <%= render partial: 'shared/result', collection: results, locals: {show_game: show_game} %>
+  <%= render partial: 'shared/result', collection: results.order("created_at ASC"), locals: {show_game: show_game} %>
 </div>

@@ -73,8 +73,8 @@ class Game < ApplicationRecord
     RatingHistoryEvent.joins(:rating).where(ratings: {game_id: self.id}).destroy_all
     Rating.where(game_id: self.id).destroy_all
 
-    results.order("id ASC").all.each do |result|
-      rater.update_ratings self, result.teams
+    results.order("created_at ASC").all.each do |result|
+      rater.update_ratings self, result
     end
   end
 end

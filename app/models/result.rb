@@ -141,12 +141,12 @@ class Result < ApplicationRecord
     # Calculate how the rating changed for player by comparing the skill rating
     # in this match to the one from previous
 
-    # The RatingHistoryEvent is created before the result, check for one created a second before the result
+    # The RatingHistoryEvent is created around the result, check for one created a second before the result
     this_skill = RatingHistoryEvent.includes(:rating).where(:created_at => (self.created_at - 1.seconds)..self.created_at, ratings: { player_id: player, game_id: self.game_id }).first.value
 
     # Get the player's results before this result and take the first one of the last 2 from this list as it'll be the previous match played
     # by this player in this game
-    prev_result = player.results.where(game_id: self.game_id, :created_at => 100.years.ago..self.created_at).last(2).first
+    prev_result = player.results.where(game_id: self.game_id, :created_at => 100.years.ago..self.created_at).order("created_at ASC").last(2).first
     # If the previous result is the same then this is their first match of 'game' so use default value for whatever rater system this game uses
     if prev_result.id == self.id
       prev_skill = Game.find(self.game_id).rater.default_attributes[:value]
