@@ -96,7 +96,6 @@ class Player < ApplicationRecord
         # Add to current unbeaten streak
         currentStreakUnbeaten.resultTimes.append(result.created_at)
       end
-
       # Ending the streak if:
       # - Player won when on a losing streak
       # - Player lost when on a winning streak
@@ -108,8 +107,11 @@ class Player < ApplicationRecord
           # Streak over and more than 1 match so adding to past streaks
           streaks.append(currentStreak)
         end
+        
         # Start new streak
         currentStreak = Streak.new()
+
+        # If we lost, restart unbeaten streak
         if lost_game
           # Save and reset unbeaten streak
           if currentStreakUnbeaten.count >= 1
@@ -118,6 +120,14 @@ class Player < ApplicationRecord
           currentStreakUnbeaten = Streak.new()
           currentStreakUnbeaten.unbeaten = true
         end
+
+        # If we won make sure this is added to unbeaten run
+        ## won after a tie or a loss
+        if won_game
+          currentStreakUnbeaten.resultTimes.append(result.created_at)
+        end
+
+        # Start a new current streak if not a tie
         if won_game or lost_game
           # Starting new #{ won_game && 'win' || 'lose'} streak
           currentStreak.resultTimes.append(result.created_at)
