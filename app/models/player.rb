@@ -73,7 +73,7 @@ class Player < ApplicationRecord
     currentStreakUnbeaten = Streak.new()
     currentStreakUnbeaten.unbeaten = true
 
-    results = self.results.where(game_id: game)
+    results = self.results.where(game_id: game).order("created_at ASC")
 
     for result in results
       # Identify whether this match was a win, loss or draw
@@ -92,12 +92,16 @@ class Player < ApplicationRecord
         # Add to loss streak
         currentStreak.resultTimes.append(result.created_at)
       # Add to unbeaten run if we're on one
-      elsif tie_game and currentStreak.win
+      elsif tie_game #and currentStreak.win 
         # Add to current unbeaten streak
         currentStreakUnbeaten.resultTimes.append(result.created_at)
       end
 
-      if (won_game and not currentStreak.win) or (lost_game and currentStreak.win) or (tie_game and not currentStreak.win)
+      # Ending the streak if:
+      # - Player won when on a losing streak
+      # - Player lost when on a winning streak
+      # - Player draws
+      if (won_game and not currentStreak.win) or (lost_game and currentStreak.win) or tie_game 
         puts "Streak over: #{tie_game && 'tie' || (won_game && 'win' || 'lose')} during a #{currentStreak.win && 'win' || 'lose'} streak"
         # end of streak
         if currentStreak.count >= 1
@@ -108,8 +112,11 @@ class Player < ApplicationRecord
         currentStreak = Streak.new()
         if lost_game
           # Save and reset unbeaten streak
-          streaks.append(currentStreakUnbeaten)
+          if currentStreakUnbeaten.count >= 1
+            streaks.append(currentStreakUnbeaten)
+          end
           currentStreakUnbeaten = Streak.new()
+          currentStreakUnbeaten.unbeaten = true
         end
         if won_game or lost_game
           # Starting new #{ won_game && 'win' || 'lose'} streak
@@ -118,7 +125,12 @@ class Player < ApplicationRecord
         currentStreak.win = won_game
       end
     end
-    return {'past': streaks, 'current': currentStreak}
+    # Return the unbeaten run if last result was a tie
+    if currentStreak.win and currentStreakUnbeaten.count > currentStreak.count
+      return {'past': streaks, 'current': currentStreakUnbeaten}
+    else
+      return {'past': streaks, 'current': currentStreak}
+    end
   end
 
   def get_streaks(game)
