@@ -77,8 +77,8 @@ module Rater
         match.result = result
       end
 
-      _update_rating_from_elo(first_rating, first_elo)
-      _update_rating_from_elo(second_rating, second_elo)
+      _update_rating_from_elo(first_rating, first_elo, result)
+      _update_rating_from_elo(second_rating, second_elo, result)
     end
 
     def to_elo rating
@@ -89,10 +89,10 @@ module Rater
       )
     end
 
-    def _update_rating_from_elo(rating, elo)
+    def _update_rating_from_elo(rating, elo, result)
       Rating.transaction do
         rating.update!(value: elo.rating, pro: elo.pro?)
-        rating.history_events.create!(value: elo.rating)
+        rating.history_events.create!(value: elo.rating, created_at: result.created_at || DateTime.now)
       end
     end
   end
@@ -147,7 +147,7 @@ module Rater
           # Locate the corresponding Rating for this TrueskillRating
           rating = (first_team + second_team).select { |rating| rating.player_id == trueskill.player_id }.first
           # Update Rating for player from TrueskillRating
-          _update_rating_from_trueskill rating, trueskill
+          _update_rating_from_trueskill rating, trueskill, result
         end
       end
     end
@@ -161,11 +161,12 @@ module Rater
       return trueskill_rating
     end
 
-    def _update_rating_from_trueskill rating, trueskill
+    def _update_rating_from_trueskill rating, trueskill, result
       Rating.transaction do
         attributes = { value: (trueskill.mean - (3.0 * trueskill.deviation)) * 100,
                        trueskill_mean: trueskill.mean,
-                       trueskill_deviation: trueskill.deviation }
+                       trueskill_deviation: trueskill.deviation,
+                       created_at: result.created_at || DateTime.now }
         rating.update! attributes
         rating.history_events.create! attributes
       end
