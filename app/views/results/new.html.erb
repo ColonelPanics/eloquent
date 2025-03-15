@@ -1,47 +1,104 @@
 <div class="p-4">
+  <h1 class="mb-4">Add result: <%= @game.name %></h1>
 
-  <% if @team_game %>
-    <h1 class="mb-4">Team Results</h1>
-    <p>
-    This game supports team results. This means that you can either select a singular player per team, or multiple.
-    There is a known issue with this form. If you attempt to submit and nothing happens, it is likely that you have selected the same player in multiple teams.
-    To select multiple players per team, use "shift + click", or "cmd + click" on mac, or "ctrl + click" on windows machines.
-    <% if @result.teams.length > 2 %>You do not need to fill in every team, start on the far left and move towards the right, the minimum requirement is the first two, then the rest are optional.<% end %>
-    </p>
+  <% if team_game? %>
+    <div class="bg-blue-100 border border-blue-800 w-1/2 mx-auto p-4 mb-4">
+      <h2 class="mb-4 text-center">Team Results</h2>
+      <p class="mb-4">
+        This game supports team results. This means that you can either select a singular player per team, or multiple.
+        <% if @result.teams.length > 2 %>
+          You do not need to fill in every team, start on the far left and move towards the right, the minimum requirement is the first two, then the rest are optional.
+        <% end %>
+      </p>
+    </div>
   <% end %>
 
   <%= form_for [@game, @result] do |f| %>
-    <div class="flex my-4">
+    <% if @result.errors.include?(:teams) %>
+      <div class="border border-red-500 bg-red-100 text-red-500 p-4 w-1/2 mx-auto">
+        <%= @result.errors.full_messages_for(:teams).join("; ") %>
+      </div>
+    <% end %>
+    <div class="flex mt-4">
       <% @result.teams.each.with_index do |team, index| %>
-        <div class="<%= class_names("grow p-4", { "bg-team-red-light": index == 0, "bg-team-blue-light": index != 0 }) %>">
+        <div class="<%= class_names("grow p-4 pb-8 mb-4", { "bg-team-red-light": index == 0, "bg-team-blue-light": index != 0 }) %>">
           <h3 class="text-center mb-2">
             Team <%= index + 1 %>
           </h3>
-          <div class="flex justify-center items-center gap-8">
-            <%=
-              select "result[teams][#{index}]",
-                     "players",
-                     player_options,
-                     {include_blank: false},
-                     class: "w-48 text-lg",
-                     multiple: @team_game,
-                     "data-placeholder" => "Team #{index + 1}"
-            %>
-            <% if index == 0 %>
-              <%= f.number_field :for, step: 1, min: 0, class: "w-16" %>
-            <% else %>
-              <%= f.number_field :against, step: 1, min: 0, class: "w-16" %>
+          <div class="flex justify-evenly items-start gap-8">
+
+            <% unless index == 0 %>
+              <div class="flex flex-col items-center">
+                <%=
+                  f.number_field :against,
+                    step: 1,
+                    min: 0,
+                    class: "w-32 text-2xl p-4 text-center",
+                    placeholder: "Score",
+                    required: true
+                %>
+                <div class="text-red-500">
+                  <%= @result.errors.messages_for(:against).join("; ") %>
+                </div>
+              </div>
             <% end %>
+
+            <% if team_game? %>
+              <div
+                data-addable-placeholder="Add new player"
+                data-controller="multiselect"
+                data-multiselect-addable-url-value=<%= players_path(format: :json) %>
+                data-multiselect-preload-url-value="<%= players_path(format: :json) %>"
+                data-multiselect-search-url-value="<%= players_path(format: :json) %>"
+                data-multiselect-selected-value="<%= team.players.map { |p| { value: p.id, text: p.name } }.to_json %>"
+                data-no-results-message="No matching players found"
+                data-placeholder="Search for players..."
+              >
+                <%=
+                  select "result[teams][#{index}]",
+                        "players",
+                        [],
+                        {},
+                        class: "multiselect__hidden",
+                        multiple: true,
+                        data: {
+                          "multiselect-target": "hidden"
+                        }
+                %>
+              </div>
+            <% else %>
+                <%=
+                  select "result[teams][#{index}]",
+                         "players",
+                         player_options,
+                         {include_blank: false},
+                         class: "w-48 text-lg",
+                         "data-placeholder" => "Team #{index + 1}"
+                %>
+            <% end %>
+
+            <% if index == 0 %>
+              <div class="flex flex-col items-center">
+                <%=
+                  f.number_field :for,
+                    step: 1,
+                    min: 0,
+                    class: "w-32 text-2xl p-4 text-center",
+                    placeholder: "Score",
+                    required: true
+                %>
+                <div class="text-red-500">
+                  <%= @result.errors.messages_for(:for).join("; ") %>
+                </div>
+              </div>
+            <% end %>
+
           </div>
         </div>
       <% end %>
     </div>
-    <div class='form-actions'>
-      <div class="row-fluid">
-      <div class="span4" style='text-align: center'>
-        <%= f.submit class: "btn btn-primary", value: 'Save Result' %>
-      </div>
-      </div>
+    <div class="flex justify-center">
+      <%= f.submit class: "btn btn-primary text-2xl", value: "Save Result" %>
     </div>
   <% end %>
 

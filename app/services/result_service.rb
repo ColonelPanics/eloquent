@@ -2,7 +2,6 @@ class ResultService
   def self.create(game, params)
     result = game.results.build
 
-
     teams = (params[:teams] || {}).values.each.with_object([]) do |team, acc|
       players = Array.wrap(team[:players]).delete_if(&:blank?)
       acc << { players: players }
@@ -17,7 +16,7 @@ class ResultService
     result.for = params[:for]
     result.against = params[:against]
 
-    if ! result.tie?
+    unless result.tie?
       result.winteam.winner = true
       result.loseteam.winner = false
     end

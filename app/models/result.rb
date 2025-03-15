@@ -44,7 +44,7 @@ class Result < ApplicationRecord
 
   def verdict
     # Check for a score draw
-    if self.against == self.for
+    if self.against == self.for || against.nil? || self.for.nil?
       # They drew, select all players involved
       winteam = ''
       loseteam = ''
