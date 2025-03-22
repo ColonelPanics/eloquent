@@ -85,10 +85,10 @@ RSpec.describe Result, type: :model do
 
       result = Result.new game: FactoryBot.create(:game)
 
-      result.teams.build rank: 1, players: [player1, player2]
-      result.teams.build rank: 1, players: [player3, player4]
-      result.teams.build rank: 2, players: [player5, player6]
-      result.teams.build rank: 3, players: [player7, player7]
+      result.teams.build rank: 1, players: [player1, player2], score: 6
+      result.teams.build rank: 1, players: [player3, player4], score: 6
+      result.teams.build rank: 2, players: [player5, player6], score: 4
+      result.teams.build rank: 3, players: [player7, player7], score: 4
 
       result.winners.should == [player1, player2, player3, player4]
     end
@@ -107,10 +107,10 @@ RSpec.describe Result, type: :model do
 
       result = Result.new game: FactoryBot.create(:game)
 
-      result.teams.build rank: 1, players: [player1, player2]
-      result.teams.build rank: 1, players: [player3, player4]
-      result.teams.build rank: 2, players: [player5, player6]
-      result.teams.build rank: 3, players: [player7, player8]
+      result.teams.build rank: 1, players: [player1, player2], score: 6
+      result.teams.build rank: 1, players: [player3, player4], score: 6
+      result.teams.build rank: 2, players: [player5, player6], score: 4
+      result.teams.build rank: 3, players: [player7, player8], score: 4
 
       result.losers.should == [player5, player6, player7, player8]
     end
@@ -122,8 +122,8 @@ RSpec.describe Result, type: :model do
         player1 = FactoryBot.build(:player)
         player2 = FactoryBot.build(:player)
         result = Result.new game: FactoryBot.create(:game)
-        result.teams.build rank: 2, players: [player1]
-        result.teams.build rank: 3, players: [player2]
+        result.teams.build rank: 2, players: [player1], score: 3
+        result.teams.build rank: 3, players: [player2], score: 7
 
         result.should_not be_valid
         result.errors[:teams].should include("must have a winner")
@@ -133,8 +133,8 @@ RSpec.describe Result, type: :model do
         player = FactoryBot.build(:player, name: nil)
 
         result = Result.new game: FactoryBot.create(:game)
-        result.teams.build rank: 1, players: [player]
-        result.teams.build rank: 2, players: [player]
+        result.teams.build rank: 1, players: [player], score: 8
+        result.teams.build rank: 2, players: [player], score: 2
 
         result.should_not be_valid
         result.errors[:teams].should include("must have unique players")
@@ -155,9 +155,9 @@ RSpec.describe Result, type: :model do
         game = FactoryBot.create(:game, min_number_of_teams: 4, max_number_of_teams: 5)
 
         result = Result.new game: game
-        result.teams.build rank: 1, players: [player1]
-        result.teams.build rank: 2, players: [player2]
-        result.teams.build rank: 2, players: [player3]
+        result.teams.build rank: 1, players: [player1], score: 8
+        result.teams.build rank: 2, players: [player2], score: 7
+        result.teams.build rank: 2, players: [player3], score: 6
 
         result.should_not be_valid
         result.errors[:teams].should == ["must have at least 4 teams"]
@@ -173,11 +173,11 @@ RSpec.describe Result, type: :model do
         game = FactoryBot.create(:game, max_number_of_teams: 4)
 
         result = Result.new game: game
-        result.teams.build rank: 1, players: [player1]
-        result.teams.build rank: 2, players: [player2]
-        result.teams.build rank: 2, players: [player3]
-        result.teams.build rank: 3, players: [player4]
-        result.teams.build rank: 2, players: [player5]
+        result.teams.build rank: 1, players: [player1], score: 8
+        result.teams.build rank: 2, players: [player2], score: 7
+        result.teams.build rank: 2, players: [player3], score: 6
+        result.teams.build rank: 3, players: [player4], score: 5
+        result.teams.build rank: 2, players: [player5], score: 4
 
         result.should_not be_valid
         result.errors[:teams].should == ["must have at most 4 teams"]
@@ -194,12 +194,12 @@ RSpec.describe Result, type: :model do
         game = FactoryBot.create(:game, max_number_of_teams: nil)
 
         result = Result.new game: game
-        result.teams.build rank: 1, players: [player1]
-        result.teams.build rank: 2, players: [player2]
-        result.teams.build rank: 2, players: [player3]
-        result.teams.build rank: 3, players: [player4]
-        result.teams.build rank: 2, players: [player5]
-        result.teams.build rank: 4, players: [player6]
+        result.teams.build rank: 1, players: [player1], score: 8
+        result.teams.build rank: 2, players: [player2], score: 7
+        result.teams.build rank: 2, players: [player3], score: 6
+        result.teams.build rank: 3, players: [player4], score: 5
+        result.teams.build rank: 2, players: [player5], score: 4
+        result.teams.build rank: 4, players: [player6], score: 3
 
         result.should be_valid
       end
@@ -211,8 +211,10 @@ RSpec.describe Result, type: :model do
         game = FactoryBot.create(:game, allow_ties: false)
 
         result = Result.new game: game
-        result.teams.build rank: 1, players: [player1]
-        result.teams.build rank: 1, players: [player2]
+        result.teams.build rank: 1, players: [player1], score: 5
+        result.teams.build rank: 1, players: [player2], score: 5
+
+        expect(result).to be_tie
 
         result.should_not be_valid
         result.errors[:teams].should == ["game does not allow ties"]
@@ -227,8 +229,8 @@ RSpec.describe Result, type: :model do
           game = FactoryBot.create(:game, min_number_of_players_per_team: 2, max_number_of_players_per_team: 2)
 
           result = Result.new game: game
-          result.teams.build rank: 1, players: [player1]
-          result.teams.build rank: 2, players: [player2, player3]
+          result.teams.build rank: 1, players: [player1], score: 6
+          result.teams.build rank: 2, players: [player2, player3], score: 4
 
           result.should_not be_valid
           result.errors[:teams].should == ["must have at least 2 players per team"]
@@ -245,8 +247,8 @@ RSpec.describe Result, type: :model do
           game = FactoryBot.create(:game, min_number_of_players_per_team: 2, max_number_of_players_per_team: 3)
 
           result = Result.new game: game
-          result.teams.build rank: 1, players: [player1, player2]
-          result.teams.build rank: 2, players: [player3, player4, player5, player6]
+          result.teams.build rank: 1, players: [player1, player2], score: 7
+          result.teams.build rank: 2, players: [player3, player4, player5, player6], score: 3
 
           result.should_not be_valid
           result.errors[:teams].should == ["must have at most 3 players per team"]
@@ -263,8 +265,8 @@ RSpec.describe Result, type: :model do
           game = FactoryBot.create(:game, max_number_of_players_per_team: nil)
 
           result = Result.new game: game
-          result.teams.build rank: 1, players: [player1]
-          result.teams.build rank: 2, players: [player2, player3, player4, player5, player6]
+          result.teams.build rank: 1, players: [player1], score: 6
+          result.teams.build rank: 2, players: [player2, player3, player4, player5, player6], score: 4
 
           result.should be_valid
         end

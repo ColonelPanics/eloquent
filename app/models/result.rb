@@ -59,7 +59,7 @@ class Result < ApplicationRecord
   end
 
   def tie?
-    teams.select{ |team| team.rank == Team::FIRST_PLACE_RANK }.count == teams.count
+    teams.select{ |team| team.rank == Team::FIRST_PLACE_RANK }.count == teams.length
   end
 
   def as_json(options = {})
