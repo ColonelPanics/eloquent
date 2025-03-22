@@ -4,18 +4,31 @@ class ResultService
 
     teams = (params[:teams] || {}).values.each.with_object([]) do |team, acc|
       players = Array.wrap(team[:players]).delete_if(&:blank?)
-      acc << { players: players }
+      acc << { players: players, score: team[:score] }
     end
 
     teams = teams.reverse.drop_while{ |team| team[:players].empty? }.reverse
 
+    teams.sort { |a, b| b[:score] <=> a[:score] }
+
+    prev_score = nil
+    current_rank = Team::FIRST_PLACE_RANK
+
     teams.each do |team|
-      result.teams.build player_ids: team[:players]
+      current_rank += 1 if prev_score && team[:score] < prev_score
+
+      result.teams.build(
+        player_ids: team[:players],
+        rank: current_rank,
+        score: team[:score]
+      )
+
+      prev_score = team[:score]
     end
 
     if result.valid?
       Result.transaction do
-        game.rater.update_ratings game, result
+        game.rater.update_ratings(game, result)
 
         result.save!
 

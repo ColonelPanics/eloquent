@@ -72,9 +72,13 @@ module Rater
         ## Testing with a blank database and first match between "one" and "two"
         ##   "one" defeats "two" 10-0: one elo 1012, two elo 987
         ##   "one" defeats "two" 6-4: one elo 1004, two elo 995
-        skew = (result.losescore / result.winscore ).to_f / 2
-        result = 1 - skew
-        match.result = result
+        #
+
+        winner_score = result.winning_teams.first.score
+        loser_score = result.losing_teams.first.score
+
+        skew = (loser_score / winner_score).to_f / 2
+        match.result = 1 - skew
       end
 
       _update_rating_from_elo(first_rating, first_elo, result)
@@ -113,19 +117,20 @@ module Rater
     def validate_game game
     end
 
-    def update_ratings game, result
+    # XXX This only works for two-team games
+    def update_ratings(game, result)
       teams = result.teams
-      
+
       # Get the arrays of players on each team
       first_team = teams.first.players.map{|player| player.ratings.find_or_create(game)}
       second_team = teams.last.players.map{|player| player.ratings.find_or_create(game)}
 
       # Identify the point skew between the 2 teams
-      first_scorediff = result.for - result.against
-      second_scorediff = result.against - result.for
+      first_scorediff = teams.first.score - teams.last.score
+      second_scorediff = teams.last.score - teams.first.score
 
       # Create a hash of the results
-      ratings_to_scorediff = {first_team => first_scorediff.to_f, second_team => second_scorediff.to_f }
+      ratings_to_scorediff = { first_team => first_scorediff.to_f, second_team => second_scorediff.to_f }
 
       # Build up the trueskill hash for ingestion
       ratings_to_trueskill = {}
@@ -140,7 +145,7 @@ module Rater
       # Calculate skill change from score difference
       graph = TrueskillScoreBasedBayesianFixed.new trueskills_to_scorediff
       graph.update_skills
-      
+
       # Update ratings from Trueskill calculations
       trueskills_to_scorediff.each do |team, score|
         team.each do |trueskill|
@@ -180,8 +185,8 @@ module Rater
 
   # Make sure player_id persists through the magic/madness of skill calculation
   ## Unlike Saulabs::TrueSkill::FactorGraph this method *does not* update the TrueSkill
-  ## Rating objects in-place which means the hash we use to track which player rating 
-  ## relates to which TrueSkill Rating (ratings_to_trueskill) does not get the shift 
+  ## Rating objects in-place which means the hash we use to track which player rating
+  ## relates to which TrueSkill Rating (ratings_to_trueskill) does not get the shift
   ## when we 'update_graph'
   class TrueskillScoreBasedBayesianFixed < Saulabs::TrueSkill::ScoreBasedBayesianRating
     def update_skills

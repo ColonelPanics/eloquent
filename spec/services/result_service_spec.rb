@@ -10,8 +10,8 @@ describe ResultService do
       response = ResultService.create(
         game,
         teams: {
-          "0" => { players: [player1.id.to_s] },
-          "1" => { players: [player2.id.to_s] }
+          "0" => { players: [player1.id.to_s], score: 6 },
+          "1" => { players: [player2.id.to_s], score: 4 }
         }
       )
 
@@ -70,9 +70,9 @@ describe ResultService do
       response = ResultService.create(
         game,
         teams: {
-          "0" => { players: [player1.id.to_s] },
-          "1" => { players: [player2.id.to_s] },
-          "2" => { players: [] }
+          "0" => { players: [player1.id.to_s], score: 6 },
+          "1" => { players: [player2.id.to_s], score: 4 },
+          "2" => { players: [], score: nil }
         }
       )
 
@@ -91,9 +91,9 @@ describe ResultService do
       response = ResultService.create(
         game,
         teams: {
-          "0" => { players: [player1.id.to_s] },
-          "1" => { players: [""] },
-          "2" => { players: [player2.id.to_s] }
+          "0" => { players: [player1.id.to_s], score: 6 },
+          "1" => { players: [""], score: 0 },
+          "2" => { players: [player2.id.to_s], score: 4 }
         }
       )
 
@@ -108,8 +108,8 @@ describe ResultService do
       response = ResultService.create(
         game,
         teams: {
-          "0" => { players: player1.id.to_s },
-          "1" => { players: player2.id.to_s }
+          "0" => { players: player1.id.to_s, score: 6 },
+          "1" => { players: player2.id.to_s, score: 4 }
         }
       )
 
@@ -128,8 +128,8 @@ describe ResultService do
       response = ResultService.create(
         game,
         teams: {
-          "0" => { players: [player1.id.to_s], relation: "ties" },
-          "1" => { players: [player2.id.to_s] },
+          "0" => { players: [player1.id.to_s], score: 5 },
+          "1" => { players: [player2.id.to_s], score: 5 },
         }
       )
 
@@ -147,8 +147,8 @@ describe ResultService do
         ResultService.create(
           game,
           teams: {
-            "0" => { players: [player1.id.to_s] },
-            "1" => { players: [player2.id.to_s] }
+            "0" => { players: [player1.id.to_s], score: 6 },
+            "1" => { players: [player2.id.to_s], score: 4 }
           }
         )
 
@@ -173,8 +173,8 @@ describe ResultService do
       result = ResultService.create(
         game,
           teams: {
-            "0" => { players: [player1.id.to_s] },
-            "1" => { players: [player2.id.to_s] }
+            "0" => { players: [player1.id.to_s], score: 8 },
+            "1" => { players: [player2.id.to_s], score: 2 }
           }
       ).result
 

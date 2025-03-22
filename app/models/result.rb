@@ -6,6 +6,8 @@ class Result < ApplicationRecord
   scope :most_recent_first, -> { order created_at: :desc }
   scope :for_game, -> (game) { where(game_id: game.id) }
 
+  validates_associated :teams
+
   validate do |result|
     if result.winners.empty?
       result.errors.add(:teams, "must have a winner")
@@ -40,8 +42,16 @@ class Result < ApplicationRecord
     teams.map(&:players).flatten
   end
 
+  def winning_teams
+    teams.select{ |team| team.rank == Team::FIRST_PLACE_RANK }
+  end
+
   def winners
     teams.select{ |team| team.rank == Team::FIRST_PLACE_RANK }.map(&:players).flatten
+  end
+
+  def losing_teams
+    teams.select{ |team| team.rank != Team::FIRST_PLACE_RANK }
   end
 
   def losers
@@ -49,7 +59,7 @@ class Result < ApplicationRecord
   end
 
   def tie?
-    teams.count == teams.winners.count
+    teams.select{ |team| team.rank == Team::FIRST_PLACE_RANK }.count == teams.count
   end
 
   def as_json(options = {})
