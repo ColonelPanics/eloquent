@@ -42,29 +42,29 @@ class Player < ApplicationRecord
   end
 
   def total_wins(game)
-    results.where(game_id: game, teams: { winner: true }).to_a.count { |r| !r.tie? }
+    results.where(game_id: game, teams: { rank: Result::FIRST_PLACE_RANK }).to_a.count { |r| !r.tie? }
   end
 
   def total_wins_on_for(game)
     # Number of wins on the "For" side
-    results.where(game_id: game, teams: { winner: true }).to_a.count { |r| r.side == 'for' }
+    results.where(game_id: game, teams: { rank: Result::FIRST_PLACE_RANK }).to_a.count { |r| r.side == 'for' }
   end
 
   def total_wins_on_against(game)
     # Number of wins on the "Against" side
-    results.where(game_id: game, teams: { winner: true }).to_a.count { |r| r.side == 'against' }
+    results.where(game_id: game, teams: { rank: Result::FIRST_PLACE_RANK }).to_a.count { |r| r.side == 'against' }
   end
 
   def wins(game, opponent)
-    results.where(game_id: game, teams: { winner: true }).against(opponent).to_a.count { |r| !r.tie? }
+    results.where(game_id: game, teams: { rank: Result::FIRST_PLACE_RANK }).against(opponent).to_a.count { |r| !r.tie? }
   end
 
   def total_losses(game)
-    results.where(game_id: game, teams: { winner: false }).to_a.count { |r| !r.tie? }
+    results.where(game_id: game).where.not(teams: { rank: Result::FIRST_PLACE_RANK }).to_a.count { |r| !r.tie? }
   end
 
   def losses(game, opponent)
-    results.where(game_id: game, teams: { winner: false }).against(opponent).to_a.count { |r| !r.tie? }
+    results.where(game_id: game).where.not(teams: { rank: Result::FIRST_PLACE_RANK }).against(opponent).to_a.count { |r| !r.tie? }
   end
 
   def get_all_streaks(game)
@@ -92,7 +92,7 @@ class Player < ApplicationRecord
         # Add to loss streak
         currentStreak.resultTimes.append(result.created_at)
       # Add to unbeaten run if we're on one
-      elsif tie_game #and currentStreak.win 
+      elsif tie_game #and currentStreak.win
         # Add to current unbeaten streak
         currentStreakUnbeaten.resultTimes.append(result.created_at)
       end
@@ -100,14 +100,14 @@ class Player < ApplicationRecord
       # - Player won when on a losing streak
       # - Player lost when on a winning streak
       # - Player draws
-      if (won_game and not currentStreak.win) or (lost_game and currentStreak.win) or tie_game 
+      if (won_game and not currentStreak.win) or (lost_game and currentStreak.win) or tie_game
         puts "Streak over: #{tie_game && 'tie' || (won_game && 'win' || 'lose')} during a #{currentStreak.win && 'win' || 'lose'} streak"
         # end of streak
         if currentStreak.count >= 1
           # Streak over and more than 1 match so adding to past streaks
           streaks.append(currentStreak)
         end
-        
+
         # Start new streak
         currentStreak = Streak.new()
 

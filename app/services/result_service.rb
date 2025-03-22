@@ -13,14 +13,6 @@ class ResultService
       result.teams.build player_ids: team[:players]
     end
 
-    result.for = params[:for]
-    result.against = params[:against]
-
-    unless result.tie?
-      result.winteam.winner = true
-      result.loseteam.winner = false
-    end
-
     if result.valid?
       Result.transaction do
         game.rater.update_ratings game, result

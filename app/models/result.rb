@@ -2,8 +2,6 @@ class Result < ApplicationRecord
   has_many :teams, dependent: :destroy
   belongs_to :game, touch: true
 
-  validates :for, presence: true, numericality: { only_integer: true }
-  validates :against, presence: true, numericality: { only_integer: true }
   validates :game, presence: true
   scope :most_recent_first, -> { order created_at: :desc }
   scope :for_game, -> (game) { where(game_id: game.id) }
@@ -42,83 +40,16 @@ class Result < ApplicationRecord
     teams.map(&:players).flatten
   end
 
-  def verdict
-    # Check for a score draw
-    if self.against == self.for || against.nil? || self.for.nil?
-      # They drew, select all players involved
-      winteam = ''
-      loseteam = ''
-      winners = teams.find_all.map(&:players).flatten
-      winscore = self.for
-      losescore = self.against
-      losers = []
-      tie = true
-      side = 'tie'
-    else
-      # If 'For' side won
-      if self.for > self.against
-        winteam = teams.first
-        winscore = self.for
-        loseteam = teams.last
-        losescore = self.against
-        side = 'for'
-      # If 'Against' side won
-      elsif self.against > self.for
-        winteam = teams.last
-        winscore = self.against
-        loseteam = teams.first
-        losescore = self.for
-        side = 'against'
-      end
-      tie = false
-      winners = winteam.players
-      losers = loseteam.players
-    end
-    return winners, losers, tie, winscore, losescore, side, winteam, loseteam
-  end
-
   def winners
-    # Returns an array of Player objects that won the match
-    # Note: In a draw, everyone is a winner!
-    verdict[0]
+    teams.select{ |team| team.rank == Team::FIRST_PLACE_RANK }.map(&:players).flatten
   end
 
   def losers
-    # Returns an array of Player objects that lost the match
-    verdict[1]
+    teams.select{ |team| team.rank != Team::FIRST_PLACE_RANK }.map(&:players).flatten
   end
 
   def tie?
-    # Boolean to check if match is a tie
-    verdict[2]
-  end
-
-  def winscore
-    # A way to access the score of the winner so later things don't
-    # need to decide whether for or against score were the winners
-    verdict[3].to_f
-  end
-
-  def losescore
-    # A way to access the score of the loser so later things don't
-    # need to decide whether for or against score were the losers
-    verdict[4].to_f
-  end
-
-  def side
-    # For seeing if the for or against side won
-    # Useful for eventual implementation of home/away based stats
-    verdict[5]
-  end
-
-  def winteam
-    # The Team object for the team that won
-    verdict[6]
-  end
-
-  def loseteam
-    # The Team object for the team that lost
-    verdict[7]
+    teams.count == teams.winners.count
   end
 
   def as_json(options = {})
