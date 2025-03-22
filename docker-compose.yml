@@ -12,6 +12,8 @@ services:
       context: .
       dockerfile: ./Dockerfile.dev
     command: bash -c "rm -f tmp/pids/server.pid && ./bin/dev"
+    environment:
+      - PGHOST=db
     tty: true
     volumes:
       - .:/elovation
