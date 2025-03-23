@@ -1,22 +1,15 @@
 <%
     span_class = show_game ? "col-span-6" : "col-span-5"
-    result_classes = "score-draw"
-    if result.for && result.against
-      result_classes = if result.for > result.against
-        if result.against == 0
-          "score-red-wins-10"
-        else
-          "score-red-wins"
-        end
-      elsif result.against > result.for
-        if result.for == 0
-          "score-blue-wins-10"
-        else
-          "score-blue-wins"
-        end
-      else
-        "score-draw"
-      end
+    result_classes = if result.tie?
+      "score-draw"
+    elsif result.winning_teams.first == result.teams.first
+      "score-red-wins"
+    else
+      "score-blue-wins"
+    end
+
+    if result.doughnut?
+      result_classes += "-10"
     end
 %>
 
@@ -42,7 +35,7 @@
     <% if i == 0 %>
       <div class="flex flex-col items-center p-1 <%= result_classes %>">
         <span class="text-2xl text-center px-4 border bg-white">
-          <%= result.for %> &ndash; <%= result.against %>
+          <%= result.teams.map(&:score).join(" – ") %>
         </span>
       </div>
     <% end %>

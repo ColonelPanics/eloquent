@@ -30,7 +30,8 @@
             <% unless index == 0 %>
               <div class="flex flex-col items-center">
                 <%=
-                  f.number_field :against,
+                  number_field "result[teams][#{index}]",
+                    :score,
                     step: 1,
                     min: 0,
                     class: "w-32 text-2xl p-4 text-center",
@@ -80,7 +81,8 @@
             <% if index == 0 %>
               <div class="flex flex-col items-center">
                 <%=
-                  f.number_field :for,
+                  number_field "result[teams][#{index}]",
+                    :score,
                     step: 1,
                     min: 0,
                     class: "w-32 text-2xl p-4 text-center",

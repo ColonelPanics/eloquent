@@ -62,6 +62,10 @@ class Result < ApplicationRecord
     teams.select{ |team| team.rank == Team::FIRST_PLACE_RANK }.count == teams.length
   end
 
+  def doughnut?
+    teams.select { |team| team.score.zero? }.any?
+  end
+
   def as_json(options = {})
     {
       winner: winners.first.name,

@@ -42,29 +42,29 @@ class Player < ApplicationRecord
   end
 
   def total_wins(game)
-    results.where(game_id: game, teams: { rank: Result::FIRST_PLACE_RANK }).to_a.count { |r| !r.tie? }
+    results.where(game_id: game, teams: { rank: Team::FIRST_PLACE_RANK }).to_a.count { |r| !r.tie? }
   end
 
   def total_wins_on_for(game)
     # Number of wins on the "For" side
-    results.where(game_id: game, teams: { rank: Result::FIRST_PLACE_RANK }).to_a.count { |r| r.side == 'for' }
+    results.where(game_id: game, teams: { rank: Team::FIRST_PLACE_RANK }).to_a.count { |r| r.side == 'for' }
   end
 
   def total_wins_on_against(game)
     # Number of wins on the "Against" side
-    results.where(game_id: game, teams: { rank: Result::FIRST_PLACE_RANK }).to_a.count { |r| r.side == 'against' }
+    results.where(game_id: game, teams: { rank: Team::FIRST_PLACE_RANK }).to_a.count { |r| r.side == 'against' }
   end
 
   def wins(game, opponent)
-    results.where(game_id: game, teams: { rank: Result::FIRST_PLACE_RANK }).against(opponent).to_a.count { |r| !r.tie? }
+    results.where(game_id: game, teams: { rank: Team::FIRST_PLACE_RANK }).against(opponent).to_a.count { |r| !r.tie? }
   end
 
   def total_losses(game)
-    results.where(game_id: game).where.not(teams: { rank: Result::FIRST_PLACE_RANK }).to_a.count { |r| !r.tie? }
+    results.where(game_id: game).where.not(teams: { rank: Team::FIRST_PLACE_RANK }).to_a.count { |r| !r.tie? }
   end
 
   def losses(game, opponent)
-    results.where(game_id: game).where.not(teams: { rank: Result::FIRST_PLACE_RANK }).against(opponent).to_a.count { |r| !r.tie? }
+    results.where(game_id: game).where.not(teams: { rank: Team::FIRST_PLACE_RANK }).against(opponent).to_a.count { |r| !r.tie? }
   end
 
   def get_all_streaks(game)
