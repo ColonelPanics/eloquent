@@ -1,6 +1,9 @@
 require "rails_helper"
 
 describe GamesController, :type => :controller do
+  include ActiveSupport::Testing::TimeHelpers
+
+
   describe "new" do
     it "exposes a new game" do
       get :new
@@ -38,7 +41,7 @@ describe GamesController, :type => :controller do
       end
 
       it "protects against mass assignment" do
-        Timecop.freeze(Time.now) do
+        freeze_time do
           game_attributes = FactoryBot.attributes_for(:game, created_at: 3.days.ago)
           post :create, params: {game: game_attributes}
 
@@ -63,7 +66,7 @@ describe GamesController, :type => :controller do
 
       delete :destroy, params: {id: game}
 
-      response.should redirect_to(dashboard_path)
+      response.should redirect_to(root_path)
       Game.find_by_id(game.id).should be_nil
     end
 
@@ -73,7 +76,7 @@ describe GamesController, :type => :controller do
 
       delete :destroy, params: {id: game}
 
-      response.should redirect_to(dashboard_path)
+      response.should redirect_to(root_path)
       Game.find_by_id(game.id).should == game
     end
   end
@@ -97,7 +100,7 @@ describe GamesController, :type => :controller do
       end
 
       it "protects against mass assignment" do
-        Timecop.freeze(Time.now) do
+        freeze_time do
           game = FactoryBot.create(:game, name: "First name")
 
           put :update, params: {id: game, game: {created_at: 3.days.ago}}
@@ -128,7 +131,7 @@ describe GamesController, :type => :controller do
     end
 
     it "returns a json response" do
-      Timecop.freeze(Time.now) do
+      freeze_time do
         game = FactoryBot.create(:game)
 
         player1 = FactoryBot.create(:player)
@@ -139,9 +142,9 @@ describe GamesController, :type => :controller do
         rating2 = FactoryBot.create(:rating, game: game, value: 1002, player: player2)
         rating3 = FactoryBot.create(:rating, game: game, value: 1001, player: player3)
 
-        result1 = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player1]), FactoryBot.create(:team, rank: 2, players: [player2])])
-        result2 = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player2]), FactoryBot.create(:team, rank: 2, players: [player3])])
-        result3 = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player3]), FactoryBot.create(:team, rank: 2, players: [player1])])
+        result1 = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player1], score: 6), FactoryBot.create(:team, rank: 2, players: [player2], score: 4)])
+        result2 = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player2], score: 6), FactoryBot.create(:team, rank: 2, players: [player3], score: 4)])
+        result3 = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player3], score: 6), FactoryBot.create(:team, rank: 2, players: [player1], score: 4)])
 
         get :show, params: {id: game, format: :json}
 

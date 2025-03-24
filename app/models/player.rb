@@ -24,6 +24,13 @@ class Player < ApplicationRecord
   validates :name, uniqueness: true, presence: true
   validates :email, allow_blank: true, format: { with: /@/, message: "expected an @ character" }
 
+  def as_json
+    {
+      name: name,
+      email: email
+    }
+  end
+
   def recent_results
     results.order("results.created_at DESC").limit(5)
   end

@@ -66,6 +66,8 @@ group :development, :test do
 
   # https://github.com/rubocop/rubocop
   gem 'rubocop'
+
+  gem 'rails-controller-testing', '~> 1.0'
 end
 
 group :development do
