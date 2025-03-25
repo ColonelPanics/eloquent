@@ -1,9 +1,6 @@
 require "rails_helper"
 
 describe GamesController, :type => :controller do
-  include ActiveSupport::Testing::TimeHelpers
-
-
   describe "new" do
     it "exposes a new game" do
       get :new

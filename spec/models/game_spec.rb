@@ -32,11 +32,11 @@ RSpec.describe Game, type: :model do
       newer_results = nil
       game = FactoryBot.create(:game)
 
-      Timecop.freeze(3.days.ago) do
+      travel_to(3.days.ago) do
         5.times.map { FactoryBot.create(:result, game: game) }
       end
 
-      Timecop.freeze(1.day.ago) do
+      travel_to(1.day.ago) do
         newer_results = 20.times.map { FactoryBot.create(:result, game: game) }
       end
 
@@ -47,11 +47,11 @@ RSpec.describe Game, type: :model do
       game = FactoryBot.create(:game)
       old = new = nil
 
-      Timecop.freeze(2.days.ago) do
+      travel_to(2.days.ago) do
         old = FactoryBot.create(:result, game: game)
       end
 
-      Timecop.freeze(1.days.ago) do
+      travel_to(1.days.ago) do
         new = FactoryBot.create(:result, game: game)
       end
 
@@ -321,13 +321,13 @@ RSpec.describe Game, type: :model do
         team1 = FactoryBot.create(:team, rank: 1, players: [player1])
         team2 = FactoryBot.create(:team, rank: 2, players: [player2])
         result = FactoryBot.create(:result, game: game, teams: [team1, team2])
-        game.rater.update_ratings game, result.teams
+        game.rater.update_ratings game, result
       end
       4.times do
         team1 = FactoryBot.create(:team, rank: 1, players: [player3])
         team2 = FactoryBot.create(:team, rank: 2, players: [player2])
         result = FactoryBot.create(:result, game: game, teams: [team1, team2])
-        game.rater.update_ratings game, result.teams
+        game.rater.update_ratings game, result
       end
 
       previous_ratings = game.all_ratings.to_a

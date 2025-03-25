@@ -20,7 +20,7 @@ module Rater
     end
 
     def update_ratings game, result
-      teams = result.teams
+      raise ArgumentError, "passed `result` that was not a Result model" unless result.is_a?(Result)
 
       if result.tie?
         first_rating, second_rating = result.winners
@@ -119,6 +119,8 @@ module Rater
 
     # XXX This only works for two-team games
     def update_ratings(game, result)
+      raise ArgumentError, "passed `result` that was not a Result model" unless result.is_a?(Result)
+
       teams = result.teams
 
       # Get the arrays of players on each team

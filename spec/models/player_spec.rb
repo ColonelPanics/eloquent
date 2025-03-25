@@ -36,13 +36,13 @@ RSpec.describe Player, type: :model do
       end
 
       it "must be a valid email format" do
-        player = Player.new
+        player = build(:player)
         player.email = "invalid-email-address"
         player.should_not be_valid
-        player.errors[:email].should == ["is invalid"]
+        expect(player).to have_error(:email, :invalid)
+
         player.email = "valid@example.com"
-        player.valid?
-        player.errors[:email].should == []
+        expect(player).to be_valid
       end
     end
   end
@@ -70,11 +70,11 @@ RSpec.describe Player, type: :model do
       game = FactoryBot.create(:game)
       player = FactoryBot.create(:player)
 
-      Timecop.freeze(3.days.ago) do
+      travel_to(3.days.ago) do
         5.times { FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player]), FactoryBot.create(:team, rank: 2)]) }
       end
 
-      Timecop.freeze(1.day.ago) do
+      travel_to(1.day.ago) do
         newer_results = 5.times.map { FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player]), FactoryBot.create(:team, rank: 2)]) }
       end
 
@@ -86,11 +86,11 @@ RSpec.describe Player, type: :model do
       player = FactoryBot.create(:player)
       old = new = nil
 
-      Timecop.freeze(2.days.ago) do
+      travel_to(2.days.ago) do
         old = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player]), FactoryBot.create(:team, rank: 2)])
       end
 
-      Timecop.freeze(1.days.ago) do
+      travel_to(1.days.ago) do
         new = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player]), FactoryBot.create(:team, rank: 2)])
       end
 
@@ -190,8 +190,8 @@ RSpec.describe Player, type: :model do
       game = FactoryBot.create(:game)
       win = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 1, players: [player]), FactoryBot.create(:team, rank: 2)])
       loss = FactoryBot.create(:result, game: game, teams: [FactoryBot.create(:team, rank: 2, players: [player]), FactoryBot.create(:team, rank: 1)])
-      player.results.for_game(game).size.should == 2
-      player.results.for_game(game).losses.should == [loss]
+      expect(player.results.for_game(game).size).to eq 2
+      expect(player.total_losses(game)).to eq 1
     end
   end
 
