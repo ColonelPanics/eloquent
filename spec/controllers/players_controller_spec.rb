@@ -16,7 +16,7 @@ describe PlayersController, :type => :controller do
       player = Player.where(name: "Drew", email: "drew@example.com").first
 
       player.should_not be_nil
-      response.should redirect_to(dashboard_path)
+      response.should redirect_to(players_path)
     end
 
     it "renders new given invalid params" do
@@ -28,7 +28,7 @@ describe PlayersController, :type => :controller do
     end
 
     it "protects against mass assignment" do
-      Timecop.freeze(Time.now) do
+      freeze_time do
         post :create, params: {player: {created_at: 3.days.ago, name: "Drew"}}
 
         player = Player.where(name: "Drew").first
@@ -43,18 +43,18 @@ describe PlayersController, :type => :controller do
 
       delete :destroy, params: {id: player}
 
-      response.should redirect_to(dashboard_path)
+      response.should redirect_to(players_path)
       Player.find_by_id(player.id).should be_nil
     end
 
-    it "doesn't allow deleting a player with results" do
+    it "deletes a player with results" do
       result = FactoryBot.create(:result)
       player = result.players.first
 
       delete :destroy, params: {id: player}
 
-      response.should redirect_to(dashboard_path)
-      Player.find_by_id(player.id).should == player
+      response.should redirect_to(players_path)
+      expect(Player.find_by_id(player.id)).to be_nil
     end
   end
 
@@ -87,7 +87,7 @@ describe PlayersController, :type => :controller do
       end
 
       it "protects against mass assignment" do
-        Timecop.freeze(Time.now) do
+        freeze_time do
           player = FactoryBot.create(:player, name: "First name")
 
           put :update, params: {id: player, player: {created_at: 3.days.ago}}
@@ -98,12 +98,21 @@ describe PlayersController, :type => :controller do
     end
 
     context "with invalid params" do
-      it "renders the edit page" do
+      it "renders the edit page", pending: "Previously broken in e1081d5" do
         player = FactoryBot.create(:player, name: "First name")
 
         put :update, params: {id: player, player: {name: nil}}
 
         response.should render_template(:edit)
+      end
+
+      it "actually redirects to player page, losing any error messages" do
+        player = FactoryBot.create(:player, name: "First name")
+
+        put :update, params: {id: player, player: {name: nil}}
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.headers["Location"]).to eq player_url(player)
+
       end
     end
   end

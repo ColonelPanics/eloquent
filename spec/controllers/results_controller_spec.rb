@@ -28,8 +28,8 @@ describe ResultsController, :type => :controller do
 
         post :create, params: {game_id: game, result: {
           teams: {
-            "0" => { players: [player_1.id.to_s] },
-            "1" => { players: [player_2.id.to_s] }
+            "0" => { players: [player_1.id.to_s], score: 6 },
+            "1" => { players: [player_2.id.to_s], score: 4 }
           }
         }}
 
@@ -48,8 +48,8 @@ describe ResultsController, :type => :controller do
 
         post :create, params: {game_id: game, result: {
           teams: {
-            "0" => { players: [player.id.to_s] },
-            "1" => { players: [player.id.to_s] }
+            "0" => { players: [player.id.to_s], score: 6 },
+            "1" => { players: [player.id.to_s], score: 4 }
           }
         }}
 
@@ -67,8 +67,8 @@ describe ResultsController, :type => :controller do
 
         ResultService.create(game,
           teams: {
-            "0" => { players: [player_1.id.to_s] },
-            "1" => { players: [player_2.id.to_s] }
+            "0" => { players: [player_1.id.to_s], score: 6 },
+            "1" => { players: [player_2.id.to_s], score: 4 }
           }
         ).result
 
@@ -80,8 +80,8 @@ describe ResultsController, :type => :controller do
 
         result = ResultService.create(game,
           teams: {
-            "0" => { players: [player_1.id.to_s] },
-            "1" => { players: [player_2.id.to_s] }
+            "0" => { players: [player_1.id.to_s], score: 6 },
+            "1" => { players: [player_2.id.to_s], score: 4 }
           }
         ).result
 

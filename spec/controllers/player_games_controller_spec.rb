@@ -7,10 +7,10 @@ describe PlayerGamesController, :type => :controller do
       player = FactoryBot.create(:player)
 
       get :show, params: {player_id: player, id: game}
-      response.should be_success
+      expect(response).to have_http_status(:success)
 
-      assigns(:game).should == game
-      assigns(:player).should == player
+      expect(assigns(:game)).to eq game
+      expect(assigns(:player)).to eq player
     end
   end
 end
