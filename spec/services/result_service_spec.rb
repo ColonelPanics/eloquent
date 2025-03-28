@@ -62,6 +62,43 @@ describe ResultService do
       response.should_not be_success
     end
 
+    it "handles teams in any order" do
+      game = create(:game)
+      player_1 = create(:player)
+      player_2 = create(:player)
+
+      teams = {
+        "0" => { players: [player_1.id.to_s], score: 2 },
+        "1" => { players: [player_2.id.to_s], score: 8 },
+      }
+
+      retval = ResultService.create(
+        game,
+        teams: teams
+      )
+
+      expect(retval).to be_success
+
+      expect(retval.result.losers).to eq [player_1]
+      expect(retval.result.winners).to eq [player_2]
+
+
+      teams = {
+        "0" => { players: [player_2.id.to_s], score: 8 },
+        "1" => { players: [player_1.id.to_s], score: 2 },
+      }
+
+      retval = ResultService.create(
+        game,
+        teams: teams
+      )
+
+      expect(retval).to be_success
+
+      expect(retval.result.losers).to eq [player_1]
+      expect(retval.result.winners).to eq [player_2]
+    end
+
     it "is successful on trailing empty teams" do
       game = FactoryBot.create(:elo_game)
       player1 = FactoryBot.create(:player)

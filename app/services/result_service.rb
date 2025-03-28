@@ -9,7 +9,7 @@ class ResultService
 
     teams = teams.reverse.drop_while{ |team| team[:players].empty? }.reverse
 
-    teams.sort { |a, b| b[:score] <=> a[:score] }
+    teams = teams.sort { |a, b| b[:score] <=> a[:score] }
 
     prev_score = nil
     current_rank = Team::FIRST_PLACE_RANK
